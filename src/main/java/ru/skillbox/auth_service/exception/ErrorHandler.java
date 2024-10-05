@@ -5,9 +5,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
-import ru.skillbox.bookshelf.exception.exceptions.BadRequestException;
-import ru.skillbox.bookshelf.exception.exceptions.ObjectNotFoundException;
-import ru.skillbox.bookshelf.exception.exceptions.UnsupportedStateException;
+import org.springframework.web.client.HttpServerErrorException;
+import ru.skillbox.auth_service.exception.exceptions.BadRequestException;
+import ru.skillbox.auth_service.exception.exceptions.ObjectNotFoundException;
+import ru.skillbox.auth_service.exception.exceptions.UnsupportedStateException;
 
 @Slf4j
 @RestControllerAdvice
@@ -26,7 +27,7 @@ public class ErrorHandler {
     public ErrorResponse handlerBadRequest(final BadRequestException e) {
 
         log.warn("400 {}", e.getMessage(), e);
-        return new ErrorResponse("Object not available 400 ", e.getMessage());
+        return new ErrorResponse("Неверный запрос ", e.getMessage());
     }
 
     @ExceptionHandler(UnsupportedStateException.class)
@@ -35,6 +36,14 @@ public class ErrorHandler {
 
         log.warn("403 {}", exception.getMessage(), exception);
         return new ErrorResponse(exception.getMessage(), exception.getMessage());
+    }
+
+    @ExceptionHandler(HttpServerErrorException.InternalServerError.class)
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    public ErrorResponse handlerUnsupportedState(final HttpServerErrorException.InternalServerError exception) {
+
+        log.warn("500 Что-то пошло не так {}", exception.getMessage(), exception);
+        return new ErrorResponse("Что-то пошло не так ", exception.getMessage());
     }
 }
 

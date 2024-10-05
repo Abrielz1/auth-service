@@ -9,6 +9,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Здесь мы регистрируем пользователя и производим манипуляции с токеном и капчей
@@ -24,41 +26,45 @@ public class UserAuthController {
     //Todo: заинжектить сервис
 
 
-
-
     @PostMapping("/register")
     @ResponseStatus(HttpStatus.OK)
-    public void registerUser() {
+    public List<String> registerUser() {
 
+        return new ArrayList<>();
     }
 
     @PostMapping("/refresh")
     @ResponseStatus(HttpStatus.OK)
-    public void refreshToken() {
+    public List<String> refreshToken() {
 
+        return new ArrayList<>();
     }
 
     @PostMapping("/password/recovery")
     @ResponseStatus(HttpStatus.OK)
-    public void passwordUserRecovery() {
+    public List<String> passwordUserRecovery() {
 
+        return new ArrayList<>();
     }
 
     @PostMapping("/password/recovery/{linkId}")
     @ResponseStatus(HttpStatus.OK)
-    public void passwordUserRecovery(@PathVariable(name = "linkId") Long linkId) {
+    public List<String> passwordUserRecovery(@PathVariable(name = "linkId") Long linkId) {
 
+        return new ArrayList<>();
     }
 
     @PostMapping("/login")
     @ResponseStatus(HttpStatus.OK)
-    public void authUser() {
+    public List<String> authUser() {
 
+        return new ArrayList<>();
     }
 
     @GetMapping()
     @ResponseStatus(HttpStatus.OK)
-    public void generateCaptcha() {
+    public String generateCaptcha() {
 
+        return "";
     }
 }

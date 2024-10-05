@@ -23,7 +23,7 @@ import lombok.ToString;
 public class RegistrationDto {
 
     @NotBlank
-    private String uuid; // (UUID ?)
+    private String uuid;
 
     @NotNull
     private Boolean deleted;
@@ -48,7 +48,7 @@ public class RegistrationDto {
     private String lastName;
 
     @NotBlank
-    private String captchaCod;
+    private String captchaCode;
 
     @NotBlank
     private String captchaSecret;
