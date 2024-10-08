@@ -77,9 +77,9 @@
 		</dependency>
 
 		<dependency>
-			<groupId>jakarta.xml.bind</groupId>
-			<artifactId>jakarta.xml.bind-api</artifactId>
-			<version>4.0.2</version>
+			<groupId>javax.xml.bind</groupId>
+			<artifactId>jaxb-api-osgi</artifactId>
+			<version>2.2.7</version>
 		</dependency>
 
 		<dependency>
@@ -88,6 +88,11 @@
 			<version>42.7.4</version>
 		</dependency>
 
+		<dependency>
+			<groupId>io.jsonwebtoken</groupId>
+			<artifactId>jjwt</artifactId>
+			<version>0.9.1</version>
+		</dependency>
 
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
@@ -101,10 +106,17 @@
 			<scope>test</scope>
 		</dependency>
 
+<!--		<dependency>-->
+<!--			<groupId>org.flywaydb</groupId>-->
+<!--			<artifactId>flyway-maven-plugin</artifactId>-->
+<!--			<version>10.19.0</version>-->
+<!--		</dependency>-->
+
 	</dependencies>
 
 	<build>
 		<plugins>
+
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
@@ -117,6 +129,22 @@
 					</excludes>
 				</configuration>
 			</plugin>
+
+<!--			<plugin>-->
+<!--				<groupId>org.flywaydb</groupId>-->
+<!--				<artifactId>flyway-maven-plugin</artifactId>-->
+<!--				<version>10.19.0</version>-->
+
+<!--				<configuration>-->
+<!--					<user>root</user>-->
+<!--					<password>root</password>-->
+<!--					<schemas>-->
+<!--						<schema>public</schema>-->
+<!--					</schemas>-->
+<!--				</configuration>-->
+
+<!--			</plugin>-->
+
 		</plugins>
 	</build>
 

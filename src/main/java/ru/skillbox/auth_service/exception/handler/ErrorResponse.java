@@ -1,4 +1,4 @@
-package ru.skillbox.auth_service.exception;
+package ru.skillbox.auth_service.exception.handler;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

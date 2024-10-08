@@ -12,6 +12,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
+import ru.skillbox.auth_service.app.entity.model.RoleType;
+import java.util.Set;
 
 @Getter
 @Setter
@@ -20,7 +22,7 @@ import lombok.ToString;
 @EqualsAndHashCode
 @NoArgsConstructor
 @AllArgsConstructor
-public class RegistrationDto {
+public class CreateUserRequest {
 
     @NotBlank
     private String uuid;
@@ -37,6 +39,11 @@ public class RegistrationDto {
     @NotBlank
     private String password;
 
+    @Min(8)
+    @Max(32)
+    @NotBlank
+    private String password2;
+
     @Min(1)
     @Max(32)
     @NotBlank
@@ -52,4 +59,7 @@ public class RegistrationDto {
 
     @NotBlank
     private String captchaSecret;
+
+    @NotNull
+    private Set<RoleType> roles;
 }

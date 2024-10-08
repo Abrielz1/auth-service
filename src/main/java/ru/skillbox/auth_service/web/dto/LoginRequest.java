@@ -23,7 +23,7 @@ import lombok.ToString;
 @EqualsAndHashCode
 @NoArgsConstructor
 @AllArgsConstructor
-public class AuthenticateDto {
+public class LoginRequest {
 
     @Email
     @NotBlank

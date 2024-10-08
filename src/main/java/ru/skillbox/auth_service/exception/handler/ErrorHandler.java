@@ -1,4 +1,4 @@
-package ru.skillbox.auth_service.exception;
+package ru.skillbox.auth_service.exception.handler;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -40,7 +40,7 @@ public class ErrorHandler {
 
     @ExceptionHandler(HttpServerErrorException.InternalServerError.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-    public ErrorResponse handlerUnsupportedState(final HttpServerErrorException.InternalServerError exception) {
+    public ErrorResponse handlerInternalServerError(final HttpServerErrorException.InternalServerError exception) {
 
         log.warn("500 Что-то пошло не так {}", exception.getMessage(), exception);
         return new ErrorResponse("Что-то пошло не так ", exception.getMessage());

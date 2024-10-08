@@ -8,7 +8,7 @@ services:
     environment:
       - POSTGRES_USER=root
       - POSTGRES_PASSWORD=root
-      - POSTGRES_DB=user_db
+      - POSTGRES_DB=auth_user_db
   redis:
     image: redis:7.0.12
     ports:

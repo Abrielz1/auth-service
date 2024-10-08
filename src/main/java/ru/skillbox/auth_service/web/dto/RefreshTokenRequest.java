@@ -15,9 +15,7 @@ import lombok.ToString;
 @EqualsAndHashCode
 @NoArgsConstructor
 @AllArgsConstructor
-public class AuthenticateResponseDto {
+public class RefreshTokenRequest {
 
-   private String accessToken;
-
-   private String refreshToken;
+    private String refreshToken;
 }

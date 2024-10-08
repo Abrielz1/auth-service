@@ -4,23 +4,27 @@ spring:
       host: localhost
       port: 6379
   jpa:
-    generate-ddl: true
+    hibernate:
+      ddl-auto: none
     show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+
   datasource:
-    url: jdbc:postgresql://localhost:5432/user_db
+    url: jdbc:postgresql://localhost:5432/auth_user_db
     username: root
     password: root
     hikari:
-      schema: user_schema
+      schema: public
       connection-init-sql: CREATE SCHEMA IF NOT EXISTS user_schema
       connection-timeout: 10000
-
 
 app:
   jwt:
     secret: "someSecretKey"
     tokenExpiration: 3m
-    refreshTokenExpiration: 30m
+    refreshTokenExpiration: 15m
 
 
 logging:

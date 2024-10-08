@@ -9,8 +9,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
-import java.util.ArrayList;
-import java.util.List;
+import ru.skillbox.auth_service.security.service.SecurityService;
 
 /**
  * Здесь мы регистрируем пользователя и производим манипуляции с токеном и капчей
@@ -22,43 +21,41 @@ import java.util.List;
 @RequiredArgsConstructor
 public class UserAuthController {
 
-
-    //Todo: заинжектить сервис
-
+    private final SecurityService service;
 
     @PostMapping("/register")
     @ResponseStatus(HttpStatus.OK)
-    public List<String> registerUser() {
+    public String registerUser() {
 
-        return new ArrayList<>();
+        return "";
     }
 
     @PostMapping("/refresh")
     @ResponseStatus(HttpStatus.OK)
-    public List<String> refreshToken() {
+    public String refreshToken() {
 
-        return new ArrayList<>();
+        return "";
     }
 
     @PostMapping("/password/recovery")
     @ResponseStatus(HttpStatus.OK)
-    public List<String> passwordUserRecovery() {
+    public String passwordUserRecovery() {
 
-        return new ArrayList<>();
+        return "";
     }
 
     @PostMapping("/password/recovery/{linkId}")
     @ResponseStatus(HttpStatus.OK)
-    public List<String> passwordUserRecovery(@PathVariable(name = "linkId") Long linkId) {
+    public String passwordUserRecovery(@PathVariable(name = "linkId") Long linkId) {
 
-        return new ArrayList<>();
+        return "";
     }
 
     @PostMapping("/login")
     @ResponseStatus(HttpStatus.OK)
-    public List<String> authUser() {
+    public String authUser() {
 
-        return new ArrayList<>();
+        return "";
     }
 
     @GetMapping()

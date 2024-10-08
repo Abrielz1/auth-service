@@ -1,0 +1,24 @@
+databaseType = "PostgreSql"
+name = "auth-service"
+id = "a221c427-a2ca-4da5-9c31-1c0ed30ee597"
+
+[flywayDesktop]
+developmentEnvironment = "development"
+shadowEnvironment = "shadow"
+schemaModel = "./schema-model"
+
+[redgateCompare]
+filterFile = "filter.rgf"
+
+[redgateCompare.postgres.options.ignores]
+ignoreNewlinesInTextObjects = "off"
+
+[flyway]
+mixed = true
+outOfOrder = true
+locations = [ "filesystem:migrations" ]
+validateMigrationNaming = true
+
+[environments.target1]
+url = "jdbc:postgresql://localhost:5432/auth_user_db"
+schemas = [ "auth_user_db" ]
