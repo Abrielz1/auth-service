@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.client.HttpServerErrorException;
+import ru.skillbox.auth_service.exception.exceptions.AlreadyExistsException;
 import ru.skillbox.auth_service.exception.exceptions.BadRequestException;
 import ru.skillbox.auth_service.exception.exceptions.ObjectNotFoundException;
 import ru.skillbox.auth_service.exception.exceptions.UnsupportedStateException;
@@ -36,6 +37,15 @@ public class ErrorHandler {
 
         log.warn("403 {}", exception.getMessage(), exception);
         return new ErrorResponse(exception.getMessage(), exception.getMessage());
+    }
+
+    @ExceptionHandler(UnsupportedStateException.class)
+    @ResponseStatus(HttpStatus.FORBIDDEN)
+    public ErrorResponse handlerAlreadyExistsHandler(final AlreadyExistsException exception) {
+
+        log.warn("403 {}", exception.getMessage(), exception);
+        return new ErrorResponse("User already exists! "
+                + exception.getMessage(), exception.getMessage());
     }
 
     @ExceptionHandler(HttpServerErrorException.InternalServerError.class)

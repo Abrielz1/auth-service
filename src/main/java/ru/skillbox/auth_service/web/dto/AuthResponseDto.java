@@ -19,6 +19,8 @@ public class AuthResponseDto {
 
     private String refreshToken;
 
+    private String uuid;
+
     private String username;
 
     private String email;

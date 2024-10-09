@@ -57,6 +57,7 @@ public class SecurityService {
                 .id(userDetails.getId())
                 .token(jwtUtils.generateJwtToken(userDetails))
                 .refreshToken(refreshToken.getToken())
+                .uuid(userDetails.getUUID())
                 .username(userDetails.getUsername())
                 .email(userDetails.getEmail())
                 .roles(roles)
