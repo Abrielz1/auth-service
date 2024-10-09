@@ -1,6 +1,7 @@
 package ru.skillbox.auth_service.security.service;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -11,6 +12,8 @@ import org.springframework.stereotype.Service;
 import ru.skillbox.auth_service.app.entity.RefreshToken;
 import ru.skillbox.auth_service.app.entity.User;
 import ru.skillbox.auth_service.app.repository.UserRepository;
+import ru.skillbox.auth_service.exception.exceptions.AlreadyExistsException;
+import ru.skillbox.auth_service.exception.exceptions.ObjectNotFoundException;
 import ru.skillbox.auth_service.exception.exceptions.RefreshTokenException;
 import ru.skillbox.auth_service.security.jwt.JwtUtils;
 import ru.skillbox.auth_service.web.dto.AuthResponseDto;
@@ -18,8 +21,10 @@ import ru.skillbox.auth_service.web.dto.CreateUserRequest;
 import ru.skillbox.auth_service.web.dto.LoginRequest;
 import ru.skillbox.auth_service.web.dto.RefreshTokenRequest;
 import ru.skillbox.auth_service.web.dto.RefreshTokenResponse;
+import java.time.LocalDateTime;
 import java.util.List;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class SecurityService {
@@ -35,6 +40,17 @@ public class SecurityService {
     private final PasswordEncoder passwordEncoder;
 
     public AuthResponseDto authenticationUser(LoginRequest loginRequest) {
+
+        User userFromDB = userRepository.findByEmail(loginRequest.getEmail())
+                .orElseThrow(() -> {
+                    log.info("User with email like: %s not preset in our DB".formatted(loginRequest.getEmail()));
+                    return new ObjectNotFoundException("User with email like: %s not preset in our DB");
+                });
+
+        if (userFromDB.getIsDeleted()) {
+            log.info("user with deleted account tries to login at " + LocalDateTime.now());
+            throw new AlreadyExistsException("user with deleted account tries to login");
+        }
 
         Authentication authentication = authenticationManager
                 .authenticate(new UsernamePasswordAuthenticationToken(

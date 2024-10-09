@@ -69,6 +69,7 @@ public class UserAuthController {
     @ResponseStatus(HttpStatus.OK)
     public String passwordUserRecovery() {
 
+        // TODO
         return "";
     }
 
@@ -76,6 +77,7 @@ public class UserAuthController {
     @ResponseStatus(HttpStatus.OK)
     public String passwordUserRecovery(@PathVariable(name = "linkId") Long linkId) {
 
+        // TODO
         return "";
     }
 

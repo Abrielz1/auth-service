@@ -43,6 +43,9 @@ public class User implements Serializable {
     @Column(nullable = false, name = "uuid", unique = true)
     private String uuid;
 
+    @Column(nullable = false, name = "is_deleted", unique = false)
+    private Boolean isDeleted;
+
     @Column(nullable = false, name = "first_name")
     private String firstName;
 
