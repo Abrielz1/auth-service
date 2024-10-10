@@ -19,6 +19,14 @@ spring:
       schema: public
       connection-init-sql: CREATE SCHEMA IF NOT EXISTS user_schema
       connection-timeout: 10000
+  flyway:
+    enabled: true
+    locations: classpath:db/migration
+    baseline-on-migrate: true
+    default-schema: public
+    out-of-order: true
+  kafka:
+    bootstrap-servers: localhost:9092
 
 app:
   jwt:
@@ -26,6 +34,11 @@ app:
     tokenExpiration: 3m
     refreshTokenExpiration: 15m
 
+  kafka:
+    kafkaMessageTopic0: "to_user_sending"
+    kafkaMessageGroupId0: "kafka-message-user-token"
+    kafkaMessageTopic1: "from_user_sending"
+    kafkaMessageGroupId1: "kafka-message-user-sending"
 
 logging:
   level:

@@ -39,11 +39,11 @@ public class ErrorHandler {
         return new ErrorResponse(exception.getMessage(), exception.getMessage());
     }
 
-    @ExceptionHandler(UnsupportedStateException.class)
-    @ResponseStatus(HttpStatus.FORBIDDEN)
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.GONE)
     public ErrorResponse handlerAlreadyExistsHandler(final AlreadyExistsException exception) {
 
-        log.warn("403 {}", exception.getMessage(), exception);
+        log.warn("410 {}", exception.getMessage(), exception);
         return new ErrorResponse("User already exists! "
                 + exception.getMessage(), exception.getMessage());
     }
