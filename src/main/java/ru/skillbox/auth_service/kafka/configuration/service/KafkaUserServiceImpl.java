@@ -47,7 +47,8 @@ public class KafkaUserServiceImpl implements KafkaUserService {
 
         if (Boolean.TRUE.equals(userToUpdate.getIsDeleted())) {
             log.info("User banned on server");
-            repository.saveAndFlush(userToUpdate);
+            this.disableUserAccount(userToUpdate.getUuid(), userToUpdate.getEmail());
+
             return userToUpdate;
         }
 
