@@ -24,6 +24,18 @@ public class AppUserDetails implements UserDetails {
         return  user.getUuid();
     }
 
+    public String getFirstname() {
+        return user.getFirstName();
+    }
+
+    public String getLastName() {
+        return user.getLastName();
+    }
+
+    public Boolean getIsDeleted() {
+        return user.getIsDeleted();
+    }
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return user.getRoles().stream().map(
@@ -33,12 +45,16 @@ public class AppUserDetails implements UserDetails {
 
     @Override
     public String getPassword() {
-        return null;
+        return user.getPassword();
+    }
+
+    public String getPassword2() {
+        return user.getPassword2();
     }
 
     @Override
     public String getUsername() {
-        return null;
+        return user.getEmail();
     }
 
     @Override

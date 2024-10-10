@@ -19,9 +19,17 @@ public class AuthResponseDto {
 
     private String refreshToken;
 
+    private String password;
+
+    private String password2;
+
     private String uuid;
 
-    private String username;
+    private Boolean isDeleted;
+
+    private String firstName;
+
+    private String lastName;
 
     private String email;
 
