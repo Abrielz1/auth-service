@@ -24,7 +24,7 @@ spring:
     locations: classpath:db/migration
     baseline-on-migrate: true
     default-schema: public
-    out-of-order: true
+    out-of-order: false
   kafka:
     bootstrap-servers: localhost:9092
 

@@ -21,7 +21,7 @@ public class KafkaMessageListener {
     @Value("${app.kafka.kafkaMessageTopic1}")
     private String topicToRead;
 
-    @Value("${app.kafla.kafkaMessageGroupId1}")
+    @Value("${app.kafka.kafkaMessageGroupId1}")
     private String messageGroupIdIdToRead;
 
     @KafkaListener(topics = "${app.kafka.kafkaMessageTopic0}",
