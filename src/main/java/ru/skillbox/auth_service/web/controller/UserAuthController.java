@@ -86,7 +86,7 @@ public class UserAuthController {
 
     @GetMapping("/captcha")
     @ResponseStatus(HttpStatus.OK)
-    public String generateCaptcha(@RequestBody String captchaCode) {
+    public String generateCaptcha() {
 
         // TODO
         return "";
