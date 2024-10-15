@@ -1,5 +1,7 @@
 package ru.skillbox.auth_service.web.controller;
 
+import com.mewebstudio.captcha.Captcha;
+import com.mewebstudio.captcha.GeneratedCaptcha;
 import jakarta.validation.constraints.NotBlank;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -88,8 +90,7 @@ public class UserAuthController {
     @ResponseStatus(HttpStatus.OK)
     public String generateCaptcha() {
 
-        // TODO
-        return "";
+        return securityService.generateCaptcha() ;
     }
 
     @GetMapping()
