@@ -1,10 +1,12 @@
 package ru.skillbox.auth_service.web.controller;
 
+import jakarta.validation.constraints.NotBlank;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -26,6 +28,7 @@ import ru.skillbox.auth_service.web.dto.RefreshTokenResponse;
  */
 
 @Slf4j
+@Validated
 @RestController
 @RequestMapping("/api/v1/auth")
 @RequiredArgsConstructor
@@ -87,5 +90,12 @@ public class UserAuthController {
         securityService.logout();
 
         return "User was logout! Username is: " + details.getUsername();
+    }
+
+    @GetMapping("/validate")
+    @ResponseStatus(HttpStatus.OK)
+    public RefreshTokenResponse userRefreshTokenRequest(@NotBlank @RequestBody RefreshTokenRequest request) {
+
+        return securityService.refreshToken(request);
     }
 }

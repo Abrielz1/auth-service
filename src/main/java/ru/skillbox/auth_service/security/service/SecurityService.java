@@ -6,7 +6,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -27,6 +26,7 @@ import ru.skillbox.auth_service.web.dto.RefreshTokenResponse;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Set;
+
 import static ru.skillbox.auth_service.web.mapper.EntityDtoMapper.toDto;
 
 @Slf4j
@@ -44,6 +44,8 @@ public class SecurityService {
 
     private final PasswordEncoder passwordEncoder;
 
+    private final UserDetailsServiceImpl userDetailsService;
+
     private final KafkaTemplate<String, KafkaMessageOutputDto> kafkaTemplate;
 
     @Value("${app.kafka.kafkaMessageTopic0}")
@@ -57,7 +59,7 @@ public class SecurityService {
                     return new ObjectNotFoundException("User with email like: %s not preset in our DB");
                 });
 
-        if (Boolean.TRUE.equals(userFromDB.getIsDeleted())) {
+        if (Boolean.TRUE.equals(userFromDB.getDeleted())) {
             log.info("user with deleted account tries to login at " + LocalDateTime.now());
             throw new AlreadyExistsException("user with deleted account tries to login");
         }
@@ -72,37 +74,32 @@ public class SecurityService {
 
         var userDetails = (AppUserDetails) authentication.getPrincipal();
 
-        var roles = userDetails.getAuthorities()
-                .stream()
-                .map(GrantedAuthority::getAuthority)
-                .toList();
+//        var roles = userDetails.getAuthorities()
+//                .stream()
+//                .map(GrantedAuthority::getAuthority)
+//                .toList();
 
         var refreshToken = refreshTokenService.create(userDetails.getId());
 
-        var response = AuthResponseDto.builder()
-                .id(userDetails.getId())
-                .token(jwtUtils.generateJwtToken(userDetails))
-                .refreshToken(refreshToken.getToken())
+        //   Map<String, Object> map = new HashMap<>();
+
+        //var response = );
+
+        //     kafkaTemplate.send(topicToSend, toDto(response));
+
+        return AuthResponseDto.builder()
                 .uuid(userDetails.getUUID())
-                .isDeleted(userDetails.getIsDeleted())
                 .email(userDetails.getEmail())
-                .password(userDetails.getPassword())
-                .password2(userDetails.getPassword2())
-                .firstName(userDetails.getFirstname())
-                .lastName(userDetails.getLastName())
-                .roles(roles)
+                .token(jwtUtils.generateTokenFromUUID(userDetails))
+                .refreshToken(refreshToken)
                 .build();
-
-        kafkaTemplate.send(topicToSend, toDto(response));
-
-        return response;
     }
 
     public void register(CreateUserRequest createUserRequest) {
 
         var user = User.builder()
                 .uuid(createUserRequest.getUuid())
-                .isDeleted(false)
+                .deleted(false)
                 .email(createUserRequest.getEmail())
                 .firstName(createUserRequest.getFirstANme())
                 .lastName(createUserRequest.getLastName())
@@ -113,7 +110,7 @@ public class SecurityService {
 
         var toSend = toDto(user);
 
-        toSend.setRoles(this.rolesMapper(user.getRoles()));
+        //  toSend.setRoles(this.rolesMapper(user.getRoles()));
 
         kafkaTemplate.send(topicToSend, toSend);
 
@@ -124,17 +121,28 @@ public class SecurityService {
 
         var requestTokenRefresh = request.getRefreshToken();
 
-        return refreshTokenService.getByRefreshToken(requestTokenRefresh)
-                .map(refreshTokenService::checkRefreshToken)
-                .map(RefreshToken::getUuid)
-                .map(uuid -> {
-                    User user = userRepository.findByUuid(uuid).orElseThrow(() ->
-                            new RefreshTokenException("Exception for userId: " + uuid));
+        if (refreshTokenService.checkRefreshToken(requestTokenRefresh)) {
+            return refreshTokenService.getByRefreshToken(requestTokenRefresh)
+                    .map(refreshTokenService::checkRefreshToken)
+                    .map(RefreshToken::getEmail)
+                    .map(email -> {
+                        User user = userRepository.findByEmail(email).orElseThrow(() ->
+                                new RefreshTokenException("Exception for userId: " + email));
 
-                    String token = jwtUtils.generateTokenFromUUID(user.getUuid());
+                        var userDetails = userDetailsService.loadUserByUsername(email);
 
-                    return new RefreshTokenResponse(token, refreshTokenService.create(user.getId()).getToken());
-                }).orElseThrow(() -> new RefreshTokenException("RefreshToken is not found!"));
+                        String token = jwtUtils.generateTokenFromUUID(userDetails);
+
+                        return new RefreshTokenResponse(token,
+                                refreshTokenService.create(user.getId()).getToken(),
+                                true);
+
+                    }).get();
+        }
+
+        return new RefreshTokenResponse(null,
+                null,
+                false);
     }
 
     public void logout() {
@@ -147,6 +155,6 @@ public class SecurityService {
 
     private List<String> rolesMapper(Set<RoleType> roles) {
 
-        return  roles.stream().map(Enum::toString).toList();
+        return roles.stream().map(Enum::toString).toList();
     }
 }

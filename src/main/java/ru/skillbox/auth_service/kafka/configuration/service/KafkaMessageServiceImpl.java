@@ -23,7 +23,7 @@ public class KafkaMessageServiceImpl implements KafkaMessageService {
 
         var isUser = kafkaUserService.getUserFomDb(message.getUuid(), message.getEmail()).get();
 
-      if (Boolean.TRUE.equals(isUser.getIsDeleted())) {
+      if (Boolean.TRUE.equals(isUser.getDeleted())) {
           log.info("user is banned");
           kafkaUserService.updateUser(isUser);
           return;

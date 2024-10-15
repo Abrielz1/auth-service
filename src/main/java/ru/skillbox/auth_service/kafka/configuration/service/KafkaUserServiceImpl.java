@@ -18,7 +18,6 @@ public class KafkaUserServiceImpl implements KafkaUserService {
 
     private final UserRepository repository;
 
-
     @Override
     public boolean checkUser(String uuid, String email) {
 
@@ -45,7 +44,7 @@ public class KafkaUserServiceImpl implements KafkaUserService {
 
         User userFromDb = this.getUserFomDb(userToUpdate.getUuid(), userToUpdate.getEmail()).get();
 
-        if (Boolean.TRUE.equals(userToUpdate.getIsDeleted())) {
+        if (Boolean.TRUE.equals(userToUpdate.getDeleted())) {
             log.info("User banned on server");
             this.disableUserAccount(userToUpdate.getUuid(), userToUpdate.getEmail());
 
@@ -98,7 +97,7 @@ public class KafkaUserServiceImpl implements KafkaUserService {
         }
 
         User userAccountToDisable = this.getUserFomDb(uuid, email).get();
-        userAccountToDisable.setIsDeleted(true);
+        userAccountToDisable.setDeleted(true);
         this.saveUserToDb(userAccountToDisable);
         log.info(("User account with email:" +
                 " %s disabled").formatted(userAccountToDisable.getEmail()));

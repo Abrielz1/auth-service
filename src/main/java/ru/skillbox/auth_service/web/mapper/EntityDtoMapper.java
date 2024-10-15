@@ -11,17 +11,10 @@ public class EntityDtoMapper {
         new KafkaMessageOutputDto();
         return KafkaMessageOutputDto
                 .builder()
-                .id(user.getId())
-                .uuid(user.getUuid())
-                .isDeleted(user.getIsDeleted())
-                .refreshToken(user.getToken())
-                .refreshToken(user.getRefreshToken())
                 .email(user.getEmail())
                 .password(user.getPassword())
-                .password2(user.getPassword2())
-                .firstName(user.getFirstName())
-                .lastName(user.getLastName())
-                .roles(user.getRoles())
+                .token(user.getToken())
+                .deleted(user.getDeleted())
                 .build();
     }
 
@@ -30,15 +23,9 @@ public class EntityDtoMapper {
         new KafkaMessageOutputDto();
         return KafkaMessageOutputDto
                 .builder()
-                .id(user.getId())
-                .uuid(user.getUuid())
-                .isDeleted(user.getIsDeleted())
                 .email(user.getEmail())
                 .password(user.getPassword())
-                .password2(user.getPassword2())
-                .firstName(user.getFirstName())
-                .lastName(user.getLastName())
-                .roles(null)
+                .deleted(user.getDeleted())
                 .build();
     }
 }

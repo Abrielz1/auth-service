@@ -14,16 +14,17 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
 import ru.skillbox.auth_service.security.service.UserDetailsServiceImpl;
+import java.time.Instant;
+import java.util.Date;
 
 @Slf4j
 @Component
 @RequiredArgsConstructor
 public class JwtTokenFilter extends OncePerRequestFilter  {
 
-    private final JwtUtils utils;
-
     private final UserDetailsServiceImpl userDetailsService;
 
+    private final JwtUtils utils;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request,
@@ -34,9 +35,9 @@ public class JwtTokenFilter extends OncePerRequestFilter  {
 
             String jwToken = this.getToken(request);
 
-            if (jwToken != null && utils.validateToken(jwToken)) {
-                String uuid = utils.getUUID(jwToken);
-                UserDetails userDetails = userDetailsService.loadUserByUsername(uuid);
+            if (jwToken != null && utils.getExpirationDateFromToken(jwToken).before(Date.from(Instant.now()))) {
+                String email = utils.getEmailFromToken(jwToken);
+                UserDetails userDetails = userDetailsService.loadUserByUsername(email);
 
 
                 UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(

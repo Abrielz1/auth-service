@@ -44,7 +44,7 @@ public class User implements Serializable {
     private String uuid;
 
     @Column(nullable = false, name = "is_deleted", unique = false)
-    private Boolean isDeleted;
+    private Boolean deleted;
 
     @Column(nullable = false, name = "first_name")
     private String firstName;

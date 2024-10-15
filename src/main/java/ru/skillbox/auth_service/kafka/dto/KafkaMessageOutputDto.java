@@ -7,7 +7,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
-import java.util.List;
 
 @Getter
 @Setter
@@ -18,23 +17,16 @@ import java.util.List;
 @AllArgsConstructor
 public class KafkaMessageOutputDto {
 
-    private Long id;
-
     private String uuid;
-
-    private String refreshToken;
-
-    private Boolean isDeleted;
 
     private String email;
 
     private String password;
 
-    private String password2;
+    private String token;
 
-    private String firstName;
+  //  private String refreshToken;
 
-    private String lastName;
+    private Boolean deleted;
 
-    private List<String> roles;
 }

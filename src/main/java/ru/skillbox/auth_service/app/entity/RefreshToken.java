@@ -27,6 +27,9 @@ public class RefreshToken {
     private String uuid;
 
     @Indexed
+    private String email;
+
+    @Indexed
     private String token;
 
     @Indexed

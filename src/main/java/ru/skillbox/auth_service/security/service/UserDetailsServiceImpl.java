@@ -16,11 +16,11 @@ public class UserDetailsServiceImpl implements UserDetailsService {
     private final UserRepository userRepository;
 
     @Override
-    public UserDetails loadUserByUsername(String uuid) throws UsernameNotFoundException {
+    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
 
-        var user = userRepository.findByUuid(uuid).orElseThrow(() -> new  ObjectNotFoundException(
+        var user = userRepository.findByEmail(email).orElseThrow(() -> new  ObjectNotFoundException(
                 "User " +
-                        " with uuid " + uuid +
+                        " with email " + email +
                         " was not found in our DB at time: " + LocalDateTime.now()
         ));
 

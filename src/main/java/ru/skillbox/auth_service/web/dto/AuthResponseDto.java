@@ -4,8 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
-import java.util.List;
+import ru.skillbox.auth_service.app.entity.RefreshToken;
 
 @Data
 @Builder
@@ -13,25 +12,11 @@ import java.util.List;
 @AllArgsConstructor
 public class AuthResponseDto {
 
-    private Long id;
+    private String uuid;
 
     private String token;
 
-    private String refreshToken;
-
-    private String password;
-
-    private String password2;
-
-    private String uuid;
-
-    private Boolean isDeleted;
-
-    private String firstName;
-
-    private String lastName;
+    private RefreshToken refreshToken;
 
     private String email;
-
-    private List<String> roles;
 }

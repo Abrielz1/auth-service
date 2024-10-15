@@ -1,15 +1,16 @@
 package ru.skillbox.auth_service.security.jwt;
 
-import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.MalformedJwtException;
-import io.jsonwebtoken.SignatureAlgorithm;
-import io.jsonwebtoken.SignatureException;
-import io.jsonwebtoken.UnsupportedJwtException;
+import io.jsonwebtoken.io.Decoders;
+import io.jsonwebtoken.security.Keys;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
-import ru.skillbox.auth_service.security.service.AppUserDetails;
+import javax.crypto.SecretKey;
+import java.nio.charset.StandardCharsets;
 import java.time.Duration;
 import java.util.Date;
 
@@ -23,40 +24,64 @@ public class JwtUtils {
     @Value("${app.jwt.tokenExpiration}")
     private Duration tokenExpiration;
 
-    public String generateJwtToken(AppUserDetails userDetails) {
-        return generateTokenFromUUID(userDetails.getUUID());
+    @Value("${app.jwt.secret}")
+    private String SECRET_KEY;  // Секретный ключ из application.properties
+
+    // Метод для создания токена
+    public String generateTokenFromUUID(UserDetails userDetails) {
+
+        return Jwts
+                .builder()
+                //.claims(claims)  // Устанавливаем полезную нагрузку (claims)
+                .subject(userDetails.getUsername())  // Субъект (пользователь)
+                .issuedAt(new Date(System.currentTimeMillis()))  // Время выпуска
+                .expiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 10))  // Время истечения (10 часов)
+                .signWith(getSignInKey(), Jwts.SIG.HS256)  // Подписываем токен с использованием ключа и алгоритма HS512
+                .compact();  // Компактифицируем токен в строку
     }
 
-    public String generateTokenFromUUID(String uuid) {
-        return Jwts.builder()
-                .setSubject(uuid)
-                .setIssuedAt(new Date())
-                .setExpiration(new Date(new Date().getTime() + tokenExpiration.toMillis()))
-                .signWith(SignatureAlgorithm.HS512, someSecretKey)
-                .compact();
+    public SecretKey getSignInKey() {
 
+        byte[] keyBytes = Decoders.BASE64.decode(SECRET_KEY);  // Декодируем секретный ключ из BASE64
+
+        return Keys.hmacShaKeyFor(keyBytes);  // Создаем ключ с помощью Keys.hmacShaKeyFor
     }
 
-    public String getUUID(String token) {
-        return Jwts.parser().setSigningKey(someSecretKey)
-                .parseClaimsJws(token).getBody().getSubject();
-    }
+    @Value("${app.jwt.secret}")
+    private String secretKey;
 
-    public Boolean validateToken(String authToken) {
+    public String getEmailFromToken(String token) {
         try {
-            Jwts.parser().setSigningKey(someSecretKey).parseClaimsJws(authToken);
-            return true;
-        } catch (SignatureException e) {
-            log.error("Signature is Invalid: {}", e.getMessage());
-        } catch (MalformedJwtException e) {
-            log.error("Token is Invalid: {}", e.getMessage());
-        } catch (ExpiredJwtException e) {
-            log.error("Token is Expired: {}", e.getMessage());
-        } catch (UnsupportedJwtException e) {
-            log.error("Token is Unsupported: {}", e.getMessage());
-        } catch (IllegalArgumentException e) {
-            log.error("Claims string is Empty: {}", e.getMessage());
+            SecretKey key = Keys.hmacShaKeyFor(secretKey.getBytes(StandardCharsets.UTF_8));
+            Claims claims = extractAllClaims(token, key);
+
+            return claims.get("email", String.class);  // Получаем email
+        } catch (Exception e) {
+            log.error("Unable to get email from token: {}", e.getMessage());
+
+            return null;
         }
-        return false;
+    }
+
+    public Date getExpirationDateFromToken(String token) {
+        try {
+            SecretKey key = Keys.hmacShaKeyFor(secretKey.getBytes(StandardCharsets.UTF_8));
+            Claims claims = extractAllClaims(token, key);
+
+            return claims.getExpiration();  // Получаем expDate (дату истечения)
+        } catch (Exception e) {
+            log.error("Unable to get expiration date from token: {}", e.getMessage());
+
+            return null;
+        }
+    }
+
+    private Claims extractAllClaims(String token, SecretKey key) {
+        Jws<Claims> jwsClaims = Jwts.parser()
+                .verifyWith(key)
+                .build()
+                .parseSignedClaims(token);
+
+        return jwsClaims.getPayload();
     }
 }
