@@ -84,6 +84,14 @@ public class UserAuthController {
         return "";
     }
 
+    @GetMapping("/captcha")
+    @ResponseStatus(HttpStatus.OK)
+    public String generateCaptcha(@RequestBody String captchaCode) {
+
+        // TODO
+        return "";
+    }
+
     @GetMapping()
     @ResponseStatus(HttpStatus.OK)
     public String generateCaptcha(@AuthenticationPrincipal UserDetails details) {

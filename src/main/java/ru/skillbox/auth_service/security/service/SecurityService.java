@@ -11,7 +11,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import ru.skillbox.auth_service.app.entity.RefreshToken;
 import ru.skillbox.auth_service.app.entity.User;
-import ru.skillbox.auth_service.app.entity.model.RoleType;
 import ru.skillbox.auth_service.app.repository.UserRepository;
 import ru.skillbox.auth_service.exception.exceptions.AlreadyExistsException;
 import ru.skillbox.auth_service.exception.exceptions.ObjectNotFoundException;
@@ -24,9 +23,6 @@ import ru.skillbox.auth_service.web.dto.LoginRequest;
 import ru.skillbox.auth_service.web.dto.RefreshTokenRequest;
 import ru.skillbox.auth_service.web.dto.RefreshTokenResponse;
 import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Set;
-
 import static ru.skillbox.auth_service.web.mapper.EntityDtoMapper.toDto;
 
 @Slf4j
@@ -71,26 +67,13 @@ public class SecurityService {
                 ));
 
         SecurityContextHolder.getContext().setAuthentication(authentication);
-
         var userDetails = (AppUserDetails) authentication.getPrincipal();
-
-//        var roles = userDetails.getAuthorities()
-//                .stream()
-//                .map(GrantedAuthority::getAuthority)
-//                .toList();
-
         var refreshToken = refreshTokenService.create(userDetails.getId());
-
-        //   Map<String, Object> map = new HashMap<>();
-
-        //var response = );
-
-        //     kafkaTemplate.send(topicToSend, toDto(response));
 
         return AuthResponseDto.builder()
                 .uuid(userDetails.getUUID())
                 .email(userDetails.getEmail())
-                .token(jwtUtils.generateTokenFromUUID(userDetails))
+                .token(jwtUtils.generateToken(userDetails))
                 .refreshToken(refreshToken)
                 .build();
     }
@@ -109,8 +92,6 @@ public class SecurityService {
                 .build();
 
         var toSend = toDto(user);
-
-        //  toSend.setRoles(this.rolesMapper(user.getRoles()));
 
         kafkaTemplate.send(topicToSend, toSend);
 
@@ -131,7 +112,7 @@ public class SecurityService {
 
                         var userDetails = userDetailsService.loadUserByUsername(email);
 
-                        String token = jwtUtils.generateTokenFromUUID(userDetails);
+                        String token = jwtUtils.generateToken(userDetails);
 
                         return new RefreshTokenResponse(token,
                                 refreshTokenService.create(user.getId()).getToken(),
@@ -151,10 +132,5 @@ public class SecurityService {
         if (currentPrincipal instanceof AppUserDetails userDetails) {
             refreshTokenService.deleteByUuid(userDetails.getUUID());
         }
-    }
-
-    private List<String> rolesMapper(Set<RoleType> roles) {
-
-        return roles.stream().map(Enum::toString).toList();
     }
 }

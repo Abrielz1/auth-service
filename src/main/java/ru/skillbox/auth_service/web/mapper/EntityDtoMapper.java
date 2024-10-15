@@ -12,9 +12,7 @@ public class EntityDtoMapper {
         return KafkaMessageOutputDto
                 .builder()
                 .email(user.getEmail())
-                .password(user.getPassword())
                 .token(user.getToken())
-                .deleted(user.getDeleted())
                 .build();
     }
 

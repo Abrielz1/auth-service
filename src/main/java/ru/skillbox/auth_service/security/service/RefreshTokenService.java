@@ -10,10 +10,8 @@ import ru.skillbox.auth_service.app.repository.RefreshTokenRepository;
 import ru.skillbox.auth_service.app.repository.UserRepository;
 import ru.skillbox.auth_service.exception.exceptions.ObjectNotFoundException;
 import ru.skillbox.auth_service.exception.exceptions.RefreshTokenException;
-import ru.skillbox.auth_service.security.jwt.JwtUtils;
 import java.time.Duration;
 import java.time.Instant;
-import java.util.Date;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -29,8 +27,6 @@ public class RefreshTokenService {
 
     private final UserRepository userRepository;
 
-    private final JwtUtils jwtUtils;
-
     public Optional<RefreshToken> getByRefreshToken(String refreshToken) {
 
         return refreshTokenRepository.findByToken(refreshToken);
@@ -38,7 +34,9 @@ public class RefreshTokenService {
 
     public RefreshToken create(Long userId) {
 
-        User user = userRepository.findById(userId).orElseThrow();
+        User user = userRepository.findById(userId).orElseThrow(()->
+                new ObjectNotFoundException("Your userId: %d not present in Db"
+                        .formatted(userId)));
 
         var refreshToken = RefreshToken
                 .builder()
@@ -65,12 +63,12 @@ public class RefreshTokenService {
 
     public Boolean checkRefreshToken(String refreshToken) {
 
-        if (jwtUtils.getExpirationDateFromToken(refreshToken).before((Date.from(Instant.now())))) {
+        var tokenToDelete = this.refreshTokenRepository.findByToken(refreshToken)
+                .orElseThrow(()->
+                        new ObjectNotFoundException("Your token: %s not present in Db"
+                                .formatted(refreshToken)));
 
-            RefreshToken tokenToDelete = this.refreshTokenRepository.findByToken(refreshToken)
-                    .orElseThrow(()->
-                            new ObjectNotFoundException("Your toren: %s not present in Db"
-                            .formatted(refreshToken)));
+        if (tokenToDelete.getExpiryDate().isBefore((Instant.now()))) {
 
            refreshTokenRepository.delete(tokenToDelete);
             throw new RefreshTokenException("Refresh token is expired! " + refreshToken

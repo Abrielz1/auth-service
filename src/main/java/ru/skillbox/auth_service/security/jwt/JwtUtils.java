@@ -11,7 +11,6 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 import javax.crypto.SecretKey;
 import java.nio.charset.StandardCharsets;
-import java.time.Duration;
 import java.util.Date;
 
 @Slf4j
@@ -19,20 +18,12 @@ import java.util.Date;
 public class JwtUtils {
 
     @Value("${app.jwt.secret}")
-    private String someSecretKey;
-
-    @Value("${app.jwt.tokenExpiration}")
-    private Duration tokenExpiration;
-
-    @Value("${app.jwt.secret}")
-    private String SECRET_KEY;  // Секретный ключ из application.properties
+    private String secretKey;  // Секретный ключ из application.properties
 
     // Метод для создания токена
-    public String generateTokenFromUUID(UserDetails userDetails) {
-
+    public String generateToken(UserDetails userDetails) {
         return Jwts
                 .builder()
-                //.claims(claims)  // Устанавливаем полезную нагрузку (claims)
                 .subject(userDetails.getUsername())  // Субъект (пользователь)
                 .issuedAt(new Date(System.currentTimeMillis()))  // Время выпуска
                 .expiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 10))  // Время истечения (10 часов)
@@ -42,17 +33,17 @@ public class JwtUtils {
 
     public SecretKey getSignInKey() {
 
-        byte[] keyBytes = Decoders.BASE64.decode(SECRET_KEY);  // Декодируем секретный ключ из BASE64
+        byte[] keyBytes = Decoders.BASE64.decode(secretKey);  // Декодируем секретный ключ из BASE64
 
         return Keys.hmacShaKeyFor(keyBytes);  // Создаем ключ с помощью Keys.hmacShaKeyFor
     }
 
     @Value("${app.jwt.secret}")
-    private String secretKey;
+    private String secretKeySome;
 
     public String getEmailFromToken(String token) {
         try {
-            SecretKey key = Keys.hmacShaKeyFor(secretKey.getBytes(StandardCharsets.UTF_8));
+            SecretKey key = Keys.hmacShaKeyFor(secretKeySome.getBytes(StandardCharsets.UTF_8));
             Claims claims = extractAllClaims(token, key);
 
             return claims.get("email", String.class);  // Получаем email
