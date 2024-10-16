@@ -1,7 +1,6 @@
 package ru.skillbox.auth_service.security.service;
 
 import com.mewebstudio.captcha.Captcha;
-import com.mewebstudio.captcha.GeneratedCaptcha;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -24,8 +23,6 @@ import ru.skillbox.auth_service.web.dto.CreateUserRequest;
 import ru.skillbox.auth_service.web.dto.LoginRequest;
 import ru.skillbox.auth_service.web.dto.RefreshTokenRequest;
 import ru.skillbox.auth_service.web.dto.RefreshTokenResponse;
-
-import java.awt.image.BufferedImage;
 import java.time.LocalDateTime;
 import static ru.skillbox.auth_service.web.mapper.EntityDtoMapper.toDto;
 
