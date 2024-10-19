@@ -22,6 +22,7 @@ public class JwtUtils {
 
     // Метод для создания токена
     public String generateToken(UserDetails userDetails) {
+
         return Jwts
                 .builder()
                 .subject(userDetails.getUsername())  // Субъект (пользователь)

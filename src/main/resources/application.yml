@@ -30,7 +30,7 @@ spring:
 
 app:
   jwt:
-    secret: "someSecretKey"
+    secret: "thisIsAReallyLongAndSecureSecretKey1234567890!"
     tokenExpiration: 3m
     refreshTokenExpiration: 15m
 

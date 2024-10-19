@@ -14,6 +14,7 @@ import ru.skillbox.auth_service.app.entity.RefreshToken;
 import ru.skillbox.auth_service.app.entity.User;
 import ru.skillbox.auth_service.app.repository.UserRepository;
 import ru.skillbox.auth_service.exception.exceptions.AlreadyExistsException;
+import ru.skillbox.auth_service.exception.exceptions.BadRequestException;
 import ru.skillbox.auth_service.exception.exceptions.ObjectNotFoundException;
 import ru.skillbox.auth_service.exception.exceptions.RefreshTokenException;
 import ru.skillbox.auth_service.kafka.dto.KafkaMessageOutputDto;
@@ -81,22 +82,33 @@ public class SecurityService {
 
     public void register(CreateUserRequest createUserRequest) {
 
+        if (userRepository.existsByEmail(createUserRequest.getEmail()) &&
+                userRepository.existsByUuid(createUserRequest.getUuid())) {
+
+            throw new AlreadyExistsException("User with" +
+                    " entered email: %s and uuid: %s already exists!"
+                            .formatted(createUserRequest.getEmail(), createUserRequest.getUuid()));
+        }
+
+        if (!createUserRequest.getPassword().equals(createUserRequest.getPassword2())) {
+            throw new BadRequestException("Passwords not mach!");
+        }
+
         var user = User.builder()
                 .uuid(createUserRequest.getUuid())
                 .deleted(false)
                 .email(createUserRequest.getEmail())
-                .firstName(createUserRequest.getFirstANme())
+                .firstName(createUserRequest.getFirstName())
                 .lastName(createUserRequest.getLastName())
                 .password(passwordEncoder.encode(createUserRequest.getPassword()))
                 .password2(passwordEncoder.encode(createUserRequest.getPassword2()))
-                .roles(createUserRequest.getRoles())
                 .build();
 
         var toSend = toDto(user);
 
-        kafkaTemplate.send(topicToSend, toSend);
+       userRepository.saveAndFlush(user);
 
-        userRepository.save(user);
+        kafkaTemplate.send(topicToSend, toSend);
     }
 
     public RefreshTokenResponse refreshToken(RefreshTokenRequest request) {

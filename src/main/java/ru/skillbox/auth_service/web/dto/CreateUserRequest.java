@@ -47,7 +47,7 @@ public class CreateUserRequest {
     @Min(1)
     @Max(32)
     @NotBlank
-    private String firstANme;
+    private String firstName;
 
     @Min(1)
     @Max(32)

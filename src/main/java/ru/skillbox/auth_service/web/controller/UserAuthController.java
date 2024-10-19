@@ -1,7 +1,5 @@
 package ru.skillbox.auth_service.web.controller;
 
-import com.mewebstudio.captcha.Captcha;
-import com.mewebstudio.captcha.GeneratedCaptcha;
 import jakarta.validation.constraints.NotBlank;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -16,8 +14,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
-import ru.skillbox.auth_service.app.repository.UserRepository;
-import ru.skillbox.auth_service.exception.exceptions.AlreadyExistsException;
 import ru.skillbox.auth_service.security.service.SecurityService;
 import ru.skillbox.auth_service.web.dto.AuthResponseDto;
 import ru.skillbox.auth_service.web.dto.CreateUserRequest;
@@ -38,19 +34,9 @@ public class UserAuthController {
 
     private final SecurityService securityService;
 
-    private final UserRepository userRepository;
-
     @PostMapping("/register")
     @ResponseStatus(HttpStatus.OK)
     public String registerUser(@RequestBody CreateUserRequest request) {
-
-        if (userRepository.existsByEmail(request.getEmail()) &&
-                userRepository.existsByUuid(request.getUuid())) {
-
-            throw new AlreadyExistsException("User with" +
-                    " entered email: %s and uuid: %s already exists!"
-                            .formatted(request.getEmail(), request.getUuid()));
-        }
 
         securityService.register(request);
         return "User was created!";
@@ -74,7 +60,7 @@ public class UserAuthController {
     @ResponseStatus(HttpStatus.OK)
     public String passwordUserRecovery() {
 
-        // TODO
+        // NIE
         return "";
     }
 
@@ -82,7 +68,7 @@ public class UserAuthController {
     @ResponseStatus(HttpStatus.OK)
     public String passwordUserRecovery(@PathVariable(name = "linkId") Long linkId) {
 
-        // TODO
+        // NIE
         return "";
     }
 
