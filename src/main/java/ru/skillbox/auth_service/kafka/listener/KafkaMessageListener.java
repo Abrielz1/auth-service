@@ -18,10 +18,10 @@ public class KafkaMessageListener {
 
     private final KafkaMessageService kafkaMessageService;
 
-    @Value("${app.kafka.kafkaMessageTopic1}")
+    @Value("${app.kafka.kafkaMessageTopic0}")
     private String topicToRead;
 
-    @Value("${app.kafka.kafkaMessageGroupId1}")
+    @Value("${app.kafka.kafkaMessageGroupId0}")
     private String messageGroupIdIdToRead;
 
     @KafkaListener(topics = "${app.kafka.kafkaMessageTopic0}",

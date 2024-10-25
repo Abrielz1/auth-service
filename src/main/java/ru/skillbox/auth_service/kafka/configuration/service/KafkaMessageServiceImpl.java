@@ -16,18 +16,14 @@ public class KafkaMessageServiceImpl implements KafkaMessageService {
     @Override
     public void updateUserEntity(KafkaMessageInputDto message) {
 
-      if (kafkaUserService.checkUser(message.getUuid(), message.getEmail())) {
-          log.info("");
-          throw new  ObjectNotFoundException("");
-      }
+        if (kafkaUserService.getUserFomDb(message.getUuid(), message.getEmail()).isPresent() &&
+                kafkaUserService.checkUser(message.getUuid(), message.getEmail())) {
+
+            log.info("User is not valid or not present in Db");
+            throw new ObjectNotFoundException("User is not valid or not present in Db");
+        }
 
         var isUser = kafkaUserService.getUserFomDb(message.getUuid(), message.getEmail()).get();
-
-      if (Boolean.TRUE.equals(isUser.getDeleted())) {
-          log.info("user is banned");
-          kafkaUserService.updateUser(isUser);
-          return;
-      }
 
         kafkaUserService.saveUserToDb(kafkaUserService.updateUser(isUser));
     }

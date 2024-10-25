@@ -37,14 +37,17 @@ public class KafkaUserServiceImpl implements KafkaUserService {
     @Override
     public User updateUser(User userToUpdate) {
 
-        if (this.checkUser(userToUpdate.getUuid(), userToUpdate.getEmail())) {
-            log.info("");
-            throw new  ObjectNotFoundException("");
+        if (this.getUserFomDb(userToUpdate.getUuid(), userToUpdate.getEmail()).isPresent()
+                && this.checkUser(userToUpdate.getUuid(), userToUpdate.getEmail())) {
+
+            log.info("User not fond in Db or not valid");
+            throw new  ObjectNotFoundException("User not fond in Db or not valid");
         }
 
         User userFromDb = this.getUserFomDb(userToUpdate.getUuid(), userToUpdate.getEmail()).get();
 
         if (Boolean.TRUE.equals(userToUpdate.getDeleted())) {
+
             log.info("User banned on server");
             this.disableUserAccount(userToUpdate.getUuid(), userToUpdate.getEmail());
 
@@ -90,7 +93,9 @@ public class KafkaUserServiceImpl implements KafkaUserService {
     @Override
     public void disableUserAccount(String uuid, String email) {
 
-        if (this.checkUser(uuid, email)) {
+        if (this.getUserFomDb(uuid, email).isPresent()
+                && this.checkUser(uuid, email)) {
+
             log.info(("User account with uuid: %s" +
                     " and email: %s is not present").formatted(uuid, email));
             throw new ObjectNotFoundException("User account is not present");
@@ -99,6 +104,7 @@ public class KafkaUserServiceImpl implements KafkaUserService {
         User userAccountToDisable = this.getUserFomDb(uuid, email).get();
         userAccountToDisable.setDeleted(true);
         this.saveUserToDb(userAccountToDisable);
+
         log.info(("User account with email:" +
                 " %s disabled").formatted(userAccountToDisable.getEmail()));
     }

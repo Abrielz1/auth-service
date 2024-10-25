@@ -3,8 +3,6 @@ package ru.skillbox.auth_service.security.service;
 import com.mewebstudio.captcha.Captcha;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -17,7 +15,6 @@ import ru.skillbox.auth_service.exception.exceptions.AlreadyExistsException;
 import ru.skillbox.auth_service.exception.exceptions.BadRequestException;
 import ru.skillbox.auth_service.exception.exceptions.ObjectNotFoundException;
 import ru.skillbox.auth_service.exception.exceptions.RefreshTokenException;
-import ru.skillbox.auth_service.kafka.dto.KafkaMessageOutputDto;
 import ru.skillbox.auth_service.security.jwt.JwtUtils;
 import ru.skillbox.auth_service.web.dto.AuthResponseDto;
 import ru.skillbox.auth_service.web.dto.CreateUserRequest;
@@ -25,7 +22,6 @@ import ru.skillbox.auth_service.web.dto.LoginRequest;
 import ru.skillbox.auth_service.web.dto.RefreshTokenRequest;
 import ru.skillbox.auth_service.web.dto.RefreshTokenResponse;
 import java.time.LocalDateTime;
-import static ru.skillbox.auth_service.web.mapper.EntityDtoMapper.toDto;
 
 @Slf4j
 @Service
@@ -43,11 +39,6 @@ public class SecurityService {
     private final PasswordEncoder passwordEncoder;
 
     private final UserDetailsServiceImpl userDetailsService;
-
-    private final KafkaTemplate<String, KafkaMessageOutputDto> kafkaTemplate;
-
-    @Value("${app.kafka.kafkaMessageTopic0}")
-    private String topicToSend;
 
     public AuthResponseDto authenticationUser(LoginRequest loginRequest) {
 
@@ -104,18 +95,16 @@ public class SecurityService {
                 .password2(passwordEncoder.encode(createUserRequest.getPassword2()))
                 .build();
 
-        var toSend = toDto(user);
-
        userRepository.saveAndFlush(user);
-
-        kafkaTemplate.send(topicToSend, toSend);
     }
 
     public RefreshTokenResponse refreshToken(RefreshTokenRequest request) {
 
         var requestTokenRefresh = request.getRefreshToken();
 
-        if (refreshTokenService.checkRefreshToken(requestTokenRefresh)) {
+        if (refreshTokenService.getByRefreshToken(requestTokenRefresh).isPresent() &&
+                Boolean.TRUE.equals(refreshTokenService.checkRefreshToken(requestTokenRefresh))) {
+
             return refreshTokenService.getByRefreshToken(requestTokenRefresh)
                     .map(refreshTokenService::checkRefreshToken)
                     .map(RefreshToken::getEmail)

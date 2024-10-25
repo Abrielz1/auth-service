@@ -2,7 +2,6 @@ package ru.skillbox.auth_service.kafka.configuration.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
-import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.common.serialization.StringDeserializer;
 import org.apache.kafka.common.serialization.StringSerializer;
 import org.springframework.beans.factory.annotation.Value;
@@ -11,44 +10,21 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.kafka.config.ConcurrentKafkaListenerContainerFactory;
 import org.springframework.kafka.core.ConsumerFactory;
 import org.springframework.kafka.core.DefaultKafkaConsumerFactory;
-import org.springframework.kafka.core.DefaultKafkaProducerFactory;
-import org.springframework.kafka.core.KafkaTemplate;
-import org.springframework.kafka.core.ProducerFactory;
 import org.springframework.kafka.support.serializer.JsonDeserializer;
 import org.springframework.kafka.support.serializer.JsonSerializer;
 import ru.skillbox.auth_service.kafka.dto.KafkaMessageInputDto;
-import ru.skillbox.auth_service.kafka.dto.KafkaMessageOutputDto;
-
 import java.util.HashMap;
 import java.util.Map;
 
 @Configuration
-public class KafkaProducerConfig {
+public class KafkaConfig {
 
     @Value("${spring.kafka.bootstrap-servers}")
     private String bootstrapServers;
 
-    @Value("${app.kafka.kafkaMessageGroupId1}")
+    @Value("${app.kafka.kafkaMessageGroupId0}")
     private String kafkaMessageGroupId;
 
-    @Bean
-    public ProducerFactory<String, KafkaMessageOutputDto> kafkaMessageProducerFactory(ObjectMapper objectMapper) {
-
-        Map<String, Object> config = new HashMap<>();
-
-        config.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
-        config.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
-        config.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, JsonSerializer.class);
-
-        return new DefaultKafkaProducerFactory<>(config, new StringSerializer(), new JsonSerializer<>(objectMapper));
-    }
-
-    @Bean
-    public KafkaTemplate<String, KafkaMessageOutputDto> kafkaTemplate(ProducerFactory<String, KafkaMessageOutputDto>
-                                                                     kafkaMessageProducerFactory) {
-
-        return new KafkaTemplate<>(kafkaMessageProducerFactory);
-    }
 
     @Bean
     public ConsumerFactory<String, KafkaMessageInputDto> kafkaMessageConsumerFactory(ObjectMapper objectMapper) {

@@ -35,10 +35,8 @@ app:
     refreshTokenExpiration: 15m
 
   kafka:
-    kafkaMessageTopic0: "to_user_sending"
-    kafkaMessageGroupId0: "kafka-message-user-token"
-    kafkaMessageTopic1: "from_user_sending"
-    kafkaMessageGroupId1: "kafka-message-user-sending"
+    kafkaMessageTopic0: "user-events"
+    kafkaMessageGroupId0: "user-event-group"
 
 logging:
   level:
