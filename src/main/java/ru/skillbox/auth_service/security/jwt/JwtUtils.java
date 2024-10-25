@@ -7,11 +7,13 @@ import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
+import ru.skillbox.auth_service.security.service.AppUserDetails;
 import javax.crypto.SecretKey;
 import java.nio.charset.StandardCharsets;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 @Slf4j
 @Component
@@ -21,11 +23,16 @@ public class JwtUtils {
     private String secretKey;  // Секретный ключ из application.properties
 
     // Метод для создания токена
-    public String generateToken(UserDetails userDetails) {
+    public String generateToken(AppUserDetails userDetails) {
 
-        return Jwts
+        Map<String, String> map = new HashMap<>();
+        map.put("UUID", userDetails.getUUID());
+        map.put("EMAIL", userDetails.getEmail());
+
+        return Jwts// Субъект (пользователь)
                 .builder()
-                .subject(userDetails.getUsername())  // Субъект (пользователь)
+                .subject(userDetails.getUsername()) // email
+                .claim("UserDetailsMap", map) // map user details
                 .issuedAt(new Date(System.currentTimeMillis()))  // Время выпуска
                 .expiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 10))  // Время истечения (10 часов)
                 .signWith(getSignInKey(), Jwts.SIG.HS256)  // Подписываем токен с использованием ключа и алгоритма HS512

@@ -62,9 +62,9 @@ public class KafkaUserServiceImpl implements KafkaUserService {
             userFromDb.setPassword(userToUpdate.getPassword());
         }
 
-        if (userToUpdate.getPassword2() != null) {
-            userFromDb.setPassword(userToUpdate.getPassword2());
-        }
+//        if (userToUpdate.getPassword2() != null) {
+//            userFromDb.setPassword(userToUpdate.getPassword2());
+//        }
 
         if (userToUpdate.getFirstName() != null) {
             userFromDb.setFirstName(userToUpdate.getFirstName());

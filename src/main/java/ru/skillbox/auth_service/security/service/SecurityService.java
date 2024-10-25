@@ -112,7 +112,7 @@ public class SecurityService {
                         User user = userRepository.findByEmail(email).orElseThrow(() ->
                                 new RefreshTokenException("Exception for userId: " + email));
 
-                        var userDetails = userDetailsService.loadUserByUsername(email);
+                        AppUserDetails userDetails = (AppUserDetails) userDetailsService.loadUserByUsername(email);
 
                         String token = jwtUtils.generateToken(userDetails);
 
