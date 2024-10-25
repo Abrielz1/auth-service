@@ -43,7 +43,7 @@ public class User implements Serializable {
     @Column(nullable = false, name = "uuid", unique = true)
     private String uuid;
 
-    @Column(nullable = false, name = "is_deleted", unique = false)
+    @Column(nullable = false, name = "deleted", unique = false)
     private Boolean deleted;
 
     @Column(nullable = false, name = "first_name")
@@ -60,6 +60,12 @@ public class User implements Serializable {
 
     @Column(nullable = false, name = "email", unique = true)
     private String email;
+
+    @Column(name = "blocked")
+    private Boolean blocked;
+
+    @Column(name = "message_permission")
+    private String messagePermission;
 
     @ElementCollection(targetClass = RoleType.class, fetch = FetchType.EAGER)
     @JoinTable(name = "user_roles", joinColumns = @JoinColumn(name = "user_id"))

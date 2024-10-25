@@ -10,6 +10,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import ru.skillbox.auth_service.app.entity.RefreshToken;
 import ru.skillbox.auth_service.app.entity.User;
+import ru.skillbox.auth_service.app.entity.model.RoleType;
 import ru.skillbox.auth_service.app.repository.UserRepository;
 import ru.skillbox.auth_service.exception.exceptions.AlreadyExistsException;
 import ru.skillbox.auth_service.exception.exceptions.BadRequestException;
@@ -22,6 +23,9 @@ import ru.skillbox.auth_service.web.dto.LoginRequest;
 import ru.skillbox.auth_service.web.dto.RefreshTokenRequest;
 import ru.skillbox.auth_service.web.dto.RefreshTokenResponse;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
 
 @Slf4j
 @Service
@@ -93,6 +97,7 @@ public class SecurityService {
                 .lastName(createUserRequest.getLastName())
                 .password(passwordEncoder.encode(createUserRequest.getPassword()))
                 .password2(passwordEncoder.encode(createUserRequest.getPassword2()))
+                .roles(new HashSet<>(List.of(RoleType.ROLE_USER)))
                 .build();
 
        userRepository.saveAndFlush(user);

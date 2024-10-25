@@ -14,4 +14,6 @@ public interface KafkaUserService {
     void saveUserToDb(User user);
 
     void disableUserAccount(String uuid, String email);
+
+    void banUserAccount(String uuid, String email);
 }

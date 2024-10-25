@@ -42,6 +42,7 @@ public class RefreshTokenService {
                 .builder()
                 .userId(user.getId())
                 .email(user.getEmail())
+                .uuid(user.getUuid())
                 .expiryDate(Instant.now().plusMillis(refreshTokenExpiration.toMillis()))
                 .token(UUID.randomUUID().toString())
                 .build();

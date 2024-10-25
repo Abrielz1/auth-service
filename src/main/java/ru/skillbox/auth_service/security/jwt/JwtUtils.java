@@ -11,8 +11,10 @@ import org.springframework.stereotype.Component;
 import ru.skillbox.auth_service.security.service.AppUserDetails;
 import javax.crypto.SecretKey;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Slf4j
@@ -25,14 +27,18 @@ public class JwtUtils {
     // Метод для создания токена
     public String generateToken(AppUserDetails userDetails) {
 
-        Map<String, String> map = new HashMap<>();
-        map.put("UUID", userDetails.getUUID());
-        map.put("EMAIL", userDetails.getEmail());
+        List<String> listOfUserDetail = new ArrayList<>();
+
+        String role = userDetails.getAuthorities().toString().substring(6,
+                userDetails.getAuthorities().toString().length() - 1);
+
+        listOfUserDetail.add(userDetails.getUUID());
+        listOfUserDetail.add(role);
 
         return Jwts// Субъект (пользователь)
                 .builder()
-                .subject(userDetails.getUsername()) // email
-                .claim("UserDetailsMap", map) // map user details
+                .subject(userDetails.getUsername())
+                .claim("UUIDAndROLES", listOfUserDetail) // map user details
                 .issuedAt(new Date(System.currentTimeMillis()))  // Время выпуска
                 .expiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 10))  // Время истечения (10 часов)
                 .signWith(getSignInKey(), Jwts.SIG.HS256)  // Подписываем токен с использованием ключа и алгоритма HS512
@@ -50,6 +56,7 @@ public class JwtUtils {
     private String secretKeySome;
 
     public String getEmailFromToken(String token) {
+
         try {
             SecretKey key = Keys.hmacShaKeyFor(secretKeySome.getBytes(StandardCharsets.UTF_8));
             Claims claims = extractAllClaims(token, key);
@@ -63,6 +70,7 @@ public class JwtUtils {
     }
 
     public Date getExpirationDateFromToken(String token) {
+
         try {
             SecretKey key = Keys.hmacShaKeyFor(secretKey.getBytes(StandardCharsets.UTF_8));
             Claims claims = extractAllClaims(token, key);
@@ -76,6 +84,7 @@ public class JwtUtils {
     }
 
     private Claims extractAllClaims(String token, SecretKey key) {
+
         Jws<Claims> jwsClaims = Jwts.parser()
                 .verifyWith(key)
                 .build()

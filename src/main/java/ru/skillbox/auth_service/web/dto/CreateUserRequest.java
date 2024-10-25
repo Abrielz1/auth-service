@@ -60,6 +60,9 @@ public class CreateUserRequest {
     @NotBlank
     private String captchaSecret;
 
-    @NotNull
+    private Boolean blocked;
+
+    private String messagePermission;
+
     private Set<RoleType> roles;
 }

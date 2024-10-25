@@ -62,16 +62,20 @@ public class KafkaUserServiceImpl implements KafkaUserService {
             userFromDb.setPassword(userToUpdate.getPassword());
         }
 
-//        if (userToUpdate.getPassword2() != null) {
-//            userFromDb.setPassword(userToUpdate.getPassword2());
-//        }
-
         if (userToUpdate.getFirstName() != null) {
             userFromDb.setFirstName(userToUpdate.getFirstName());
         }
 
         if (userToUpdate.getLastName() != null) {
             userFromDb.setLastName(userToUpdate.getLastName());
+        }
+
+        if (userToUpdate.getBlocked() != null && !userToUpdate.getBlocked()) {
+            this.banUserAccount(userToUpdate.getUuid(), userToUpdate.getEmail());
+        }
+
+        if (userToUpdate.getMessagePermission() != null) {
+            userFromDb.setMessagePermission(userToUpdate.getMessagePermission());
         }
 
         if (userToUpdate.getRoles() != null) {
@@ -103,6 +107,25 @@ public class KafkaUserServiceImpl implements KafkaUserService {
 
         User userAccountToDisable = this.getUserFomDb(uuid, email).get();
         userAccountToDisable.setDeleted(true);
+        this.saveUserToDb(userAccountToDisable);
+
+        log.info(("User account with email:" +
+                " %s deleted").formatted(userAccountToDisable.getEmail()));
+    }
+
+    @Override
+    public void banUserAccount(String uuid, String email) {
+
+        if (this.getUserFomDb(uuid, email).isPresent()
+                && this.checkUser(uuid, email)) {
+
+            log.info(("User account with uuid: %s" +
+                    " and email: %s is not present").formatted(uuid, email));
+            throw new ObjectNotFoundException("User account is not present");
+        }
+
+        User userAccountToDisable = this.getUserFomDb(uuid, email).get();
+        userAccountToDisable.setBlocked(true);
         this.saveUserToDb(userAccountToDisable);
 
         log.info(("User account with email:" +
