@@ -38,11 +38,13 @@ public class JwtUtils {
         return Jwts// Субъект (пользователь)
                 .builder()
                 .subject(userDetails.getUsername())
-                .claim("UUIDAndROLES", listOfUserDetail) // map user details
-                .issuedAt(new Date(System.currentTimeMillis()))  // Время выпуска
-                .expiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 10))  // Время истечения (10 часов)
-                .signWith(getSignInKey(), Jwts.SIG.HS256)  // Подписываем токен с использованием ключа и алгоритма HS512
-                .compact();  // Компактифицируем токен в строку
+                .claim("UUID", userDetails.getUUID()) // uuid
+                .claim("ROLE", userDetails.getAuthorities().toString().substring(6,
+                        userDetails.getAuthorities().toString().length() - 1)) // user ROLE
+                .issuedAt(new Date(System.currentTimeMillis())) // Время выпуска
+                .expiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 10)) // Время истечения (10 часов)
+                .signWith(getSignInKey(), Jwts.SIG.HS256) // Подписываем токен с использованием ключа и алгоритма HS512
+                .compact(); // Компактифицируем токен в строку
     }
 
     public SecretKey getSignInKey() {
