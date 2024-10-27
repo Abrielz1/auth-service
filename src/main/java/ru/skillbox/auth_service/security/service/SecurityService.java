@@ -23,7 +23,6 @@ import ru.skillbox.auth_service.web.dto.LoginRequest;
 import ru.skillbox.auth_service.web.dto.RefreshTokenRequest;
 import ru.skillbox.auth_service.web.dto.RefreshTokenResponse;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 

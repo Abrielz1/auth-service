@@ -2,7 +2,6 @@ package ru.skillbox.auth_service.kafka.listener;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.kafka.support.KafkaHeaders;
 import org.springframework.messaging.handler.annotation.Header;
@@ -17,12 +16,6 @@ import ru.skillbox.auth_service.kafka.dto.KafkaMessageInputDto;
 public class KafkaMessageListener {
 
     private final KafkaMessageService kafkaMessageService;
-
-    @Value("${app.kafka.kafkaMessageTopic0}")
-    private String topicToRead;
-
-    @Value("${app.kafka.kafkaMessageGroupId0}")
-    private String messageGroupIdIdToRead;
 
     @KafkaListener(topics = "${app.kafka.kafkaMessageTopic0}",
             groupId = "${app.kafka.kafkaMessageGroupId0}",
