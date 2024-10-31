@@ -13,7 +13,7 @@ CREATE TABLE IF NOT EXISTS users (
 
 CREATE TABLE IF NOT EXISTS user_roles (
     user_id         BIGINT NOT NULL,
-    roles           VARCHAR(255) CHECK (roles IN ('ROLE_USER','ROLE_ADMIN')),
+    roles           VARCHAR(255) CHECK (roles IN ('USER','ADMIN')),
 
     CONSTRAINT fk_user_roles_on_user
         FOREIGN KEY (user_id) REFERENCES users (id)

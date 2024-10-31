@@ -37,8 +37,7 @@ public class JwtUtils {
                 .builder()
                 .subject(userDetails.getUsername())
                 .claim("UUID", userDetails.getUUID()) // uuid
-                .claim("ROLE", userDetails.getAuthorities().toString().substring(6,
-                        userDetails.getAuthorities().toString().length() - 1)) // user ROLE
+                .claim("ROLE", userDetails.getAuthorities().toString()) // user ROLE .substring(6,userDetails.getAuthorities().toString().length() - 1)
                 .issuedAt(new Date(System.currentTimeMillis())) // Время выпуска
                 .expiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 10)) // Время истечения (10 часов)
                 .signWith(getSignInKey(), Jwts.SIG.HS256) // Подписываем токен с использованием ключа и алгоритма HS512

@@ -12,7 +12,7 @@ spring:
         format_sql: true
 
   datasource:
-    url: jdbc:postgresql://localhost:5432/auth_user_db
+    url: jdbc:postgresql://postgres-container:5432/auth_user_db
     username: root
     password: root
     hikari:
@@ -26,7 +26,7 @@ spring:
     default-schema: public
     out-of-order: false
   kafka:
-    bootstrap-servers: localhost:9092
+    bootstrap-servers: cb359fd6349abd6e-kafka-1:9092
 
 app:
   jwt:

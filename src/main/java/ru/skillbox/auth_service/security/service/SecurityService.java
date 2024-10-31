@@ -51,7 +51,7 @@ public class SecurityService {
                     return new ObjectNotFoundException("User with email like: %s not preset in our DB");
                 });
 
-        if (Boolean.TRUE.equals(userFromDB.getDeleted())) {
+        if (Boolean.TRUE.equals(userFromDB.getDeleted())|| Boolean.TRUE.equals(userFromDB.getBlocked())) {
             log.info("user with deleted account tries to login at " + LocalDateTime.now());
             throw new AlreadyExistsException("user with deleted account tries to login");
         }

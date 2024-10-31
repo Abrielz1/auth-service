@@ -48,8 +48,16 @@ public class KafkaUserServiceImpl implements KafkaUserService {
 
         if (Boolean.TRUE.equals(userToUpdate.getDeleted())) {
 
-            log.info("User banned on server");
+            log.info("User deleted on server");
             this.disableUserAccount(userToUpdate.getUuid(), userToUpdate.getEmail());
+
+            return userToUpdate;
+        }
+
+        if (Boolean.TRUE.equals(userToUpdate.getBlocked())) {
+
+            log.info("User banned on server");
+            this.banUserAccount(userToUpdate.getUuid(), userToUpdate.getEmail());
 
             return userToUpdate;
         }
@@ -70,7 +78,7 @@ public class KafkaUserServiceImpl implements KafkaUserService {
             userFromDb.setLastName(userToUpdate.getLastName());
         }
 
-        if (userToUpdate.getBlocked() != null && !userToUpdate.getBlocked()) {
+        if (userToUpdate.getBlocked() != null) {
             this.banUserAccount(userToUpdate.getUuid(), userToUpdate.getEmail());
         }
 
