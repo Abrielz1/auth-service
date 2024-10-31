@@ -26,6 +26,10 @@ public class KafkaMessageListener {
         log.info("Received message: {}", message);
         log.info("Message: {}; Topic: {}, Time: {}", message, topic, System.currentTimeMillis());
 
+        if (message == null) {
+            throw new RuntimeException();
+        }
+
         System.out.println("message: " + message + " time received in ms:" + System.currentTimeMillis());
         kafkaMessageService.updateUserEntity(message);
     }

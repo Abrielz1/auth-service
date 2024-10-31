@@ -24,13 +24,13 @@ public class KafkaMessageInputDto {
 
     private String refreshToken;
 
-    private Boolean isDeleted;
+    private Boolean deleted;
+
+    private Boolean blocked;
 
     private String email;
 
     private String password;
-
-    private String password2;
 
     private String firstName;
 
