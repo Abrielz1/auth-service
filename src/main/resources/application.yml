@@ -52,4 +52,11 @@ logging:
         interceptor:
           TRACE
 
+  eureka:
+    client:
+      serviceUrl:
+        defaultZone: http://79.174.80.223:8761/eureka/
 
+  spring:
+    application:
+      name: auth-service

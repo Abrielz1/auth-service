@@ -13,7 +13,21 @@ services:
     image: redis:7.0.12
     ports:
       - "6379:6379"
-      -
+  friends-service:
+    image: auth-service
+    build:
+      context: .
+    ports:
+      - "8091:8080"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres-container:5432/friends
+      SPRING_DATASOURCE_USERNAME: network
+      SPRING_DATASOURCE_PASSWORD: dreamteam777*
+      SPRING_KAFKA_BOOTSTRAP_SERVERS: cb359fd6349abd6e-kafka-1:9092  # Подключение к существующему Kafka контейнеру
+      SPRING_FLYWAY_ENABLED: "true"
+      SPRING_FLYWAY_LOCATIONS: classpath:db/migration
+      SPRING_FLYWAY_BASELINE_ON_MIGRATE: "true"
+
   kafka:
     image: confluentinc/cp-kafka:6.2.0
     depends_on:
@@ -28,25 +42,6 @@ services:
       KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
       KAFKA_AUTO_CREATE_TOPIC_ENABLE: 'true'
-    networks:
-      - kafka-docker_default
-      - microservice-network
-      - teamcity_default
-
-  account-service:
-    image: auth-service
-    build:
-      context: .
-    ports:
-      - "8091:8080"
-    environment:
-      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres-container:5432/auth_user_db
-      SPRING_DATASOURCE_USERNAME: network
-      SPRING_DATASOURCE_PASSWORD: dreamteam777*
-      SPRING_KAFKA_BOOTSTRAP_SERVERS: kafka:9092  # Подключение к Kafka
-      SPRING_FLYWAY_ENABLED: "true"
-      SPRING_FLYWAY_LOCATIONS: classpath:db/migration
-      SPRING_FLYWAY_BASELINE_ON_MIGRATE: "true"
     networks:
       - kafka-docker_default
       - microservice-network
