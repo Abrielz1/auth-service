@@ -20,6 +20,7 @@ import lombok.Setter;
 import lombok.ToString;
 import org.hibernate.proxy.HibernateProxy;
 import ru.skillbox.auth_service.app.entity.model.RoleType;
+
 import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Objects;
@@ -43,8 +44,11 @@ public class User implements Serializable {
     @Column(nullable = false, name = "uuid", unique = true)
     private String uuid;
 
-    @Column(nullable = false, name = "deleted", unique = false)
+    @Column(nullable = false, name = "deleted")
     private Boolean deleted;
+
+    @Column(name = "blocked")
+    private Boolean blocked;
 
     @Column(nullable = false, name = "first_name")
     private String firstName;
@@ -52,17 +56,14 @@ public class User implements Serializable {
     @Column(nullable = false, name = "last_name")
     private String lastName;
 
-    @Column(nullable = false, name = "password", unique = true)
-    private String password;
+    @Column(nullable = false, name = "password1", unique = true)
+    private String password1;
 
     @Column(nullable = false, name = "password2", unique = true)
     private String password2;
 
     @Column(nullable = false, name = "email", unique = true)
     private String email;
-
-    @Column(name = "blocked")
-    private Boolean blocked;
 
     @Column(name = "message_permission")
     private String messagePermission;

@@ -1,94 +1,151 @@
 package ru.skillbox.auth_service.security.jwt;
 
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Jws;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.io.Decoders;
-import io.jsonwebtoken.security.Keys;
+import io.jsonwebtoken.MalformedJwtException;
+import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.SignatureException;
+import io.jsonwebtoken.UnsupportedJwtException;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
-import ru.skillbox.auth_service.security.service.AppUserDetails;
-import javax.crypto.SecretKey;
-import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
+import ru.skillbox.auth_service.app.entity.User;
+import ru.skillbox.auth_service.app.entity.model.RoleType;
+import ru.skillbox.auth_service.exception.exceptions.BadRequestException;
+import ru.skillbox.auth_service.web.dto.ValidateUserDetails;
+
+import java.sql.Timestamp;
+import java.time.Duration;
+import java.time.Instant;
+import java.util.Base64;
 import java.util.Date;
-import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 @Slf4j
 @Component
+@RequiredArgsConstructor
 public class JwtUtils {
 
     @Value("${app.jwt.secret}")
-    private String secretKey;  // Секретный ключ из application.properties
+    private String someSecretKey;
 
-    // Метод для создания токена
-    public String generateToken(AppUserDetails userDetails) {
+    @Value("${app.jwt.tokenExpiration}")
+    private Duration tokenExpiration;
 
-        List<String> listOfUserDetail = new ArrayList<>();
+    private final ObjectMapper objectMapper;
 
-        String role = userDetails.getAuthorities().toString().substring(6,
-                userDetails.getAuthorities().toString().length() - 1);
+    private static final String EMAIL = "email";
 
-        listOfUserDetail.add(userDetails.getUUID());
-        listOfUserDetail.add(role);
+    private static final String UUID = "uuid";
 
-        return Jwts// Субъект (пользователь)
-                .builder()
-                .subject(userDetails.getUsername())
-                .claim("UUID", userDetails.getUUID()) // uuid
-                .claim("ROLE", userDetails.getAuthorities().toString()) // user ROLE .substring(6,userDetails.getAuthorities().toString().length() - 1)
-                .issuedAt(new Date(System.currentTimeMillis())) // Время выпуска
-                .expiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 10)) // Время истечения (10 часов)
-                .signWith(getSignInKey(), Jwts.SIG.HS256) // Подписываем токен с использованием ключа и алгоритма HS512
-                .compact(); // Компактифицируем токен в строку
+    private static final String ROLES = "roles";
+
+    public String generateTokenFromUser(User user) {
+
+        Date issuedAt = new Date();
+
+        return Jwts.builder()
+                .setSubject(user.getEmail())
+                .claim(UUID, user.getUuid())
+                .claim(EMAIL, user.getEmail())
+                .claim(ROLES, user.getRoles())
+                .setIssuedAt(issuedAt)
+                .setExpiration(new Date(issuedAt.getTime() + tokenExpiration.toMillis()))
+                .signWith(SignatureAlgorithm.HS512, someSecretKey)
+                .compact();
     }
 
-    public SecretKey getSignInKey() {
+    public String generateTokenFromValidateUserDetails(ValidateUserDetails user) {
 
-        byte[] keyBytes = Decoders.BASE64.decode(secretKey);  // Декодируем секретный ключ из BASE64
-
-        return Keys.hmacShaKeyFor(keyBytes);  // Создаем ключ с помощью Keys.hmacShaKeyFor
+        return Jwts.builder()
+                .setSubject(user.getEmail())
+                .claim(UUID, user.getUuid())
+                .claim(EMAIL, user.getEmail())
+                .claim(ROLES, user.getRoles())
+                .setIssuedAt(user.getIat())
+                .setExpiration(user.getExp())
+                .signWith(SignatureAlgorithm.HS512, someSecretKey)
+                .compact();
     }
 
-    @Value("${app.jwt.secret}")
-    private String secretKeySome;
+    public String getEmail(String token) {
+        return Jwts.parser().setSigningKey(someSecretKey)
+                .parseClaimsJws(token).getBody().getSubject();
+    }
 
-    public String getEmailFromToken(String token) {
+    public Boolean validateToken(String authToken) {
 
         try {
-            SecretKey key = Keys.hmacShaKeyFor(secretKeySome.getBytes(StandardCharsets.UTF_8));
-            Claims claims = extractAllClaims(token, key);
+            Jwts.parser().setSigningKey(someSecretKey).parseClaimsJws(authToken);
 
-            return claims.get("email", String.class);  // Получаем email
-        } catch (Exception e) {
-            log.error("Unable to get email from token: {}", e.getMessage());
-
-            return null;
+            return true;
+        } catch (SignatureException e) {
+            log.error("Signature is Invalid: {}", e.getMessage());
+        } catch (MalformedJwtException e) {
+            log.error("Token is Invalid: {}", e.getMessage());
+        } catch (ExpiredJwtException e) {
+            log.error("Token is Expired: {}", e.getMessage());
+        } catch (UnsupportedJwtException e) {
+            log.error("Token is Unsupported: {}", e.getMessage());
+        } catch (IllegalArgumentException e) {
+            log.error("Claims string is Empty: {}", e.getMessage());
         }
+
+        return false;
     }
 
-    public Date getExpirationDateFromToken(String token) {
+    public ValidateUserDetails getUserFromToken(String token) {
+
+        String payload = new String(Base64.getDecoder().decode(this.shredToken(token)[1]));
+        ValidateUserDetails userDetails = new ValidateUserDetails();
+
+        Map claims;
 
         try {
-            SecretKey key = Keys.hmacShaKeyFor(secretKey.getBytes(StandardCharsets.UTF_8));
-            Claims claims = extractAllClaims(token, key);
 
-            return claims.getExpiration();  // Получаем expDate (дату истечения)
-        } catch (Exception e) {
-            log.error("Unable to get expiration date from token: {}", e.getMessage());
-
-            return null;
+            claims = objectMapper.readValue(payload, Map.class);
+        } catch (JsonProcessingException e) {
+            log.info("Via Security Service getUserFromToken get null or empty or malformed token: %s !".formatted(token));
+            e.printStackTrace();
+            throw new BadRequestException("No payload in token or token may be empty or null!");
         }
+
+        userDetails.setEmail(claims.get(EMAIL).toString());
+        userDetails.setUuid(claims.get(UUID).toString());
+        userDetails.setRoles(claims.get(ROLES).toString().equals("ADMIN") ? Set.of(RoleType.ADMIN) : Set.of(RoleType.USER));
+        userDetails.setIat(new Date(Timestamp.from(Instant.ofEpochSecond((Integer) claims.get("iat"))).getTime()));
+        userDetails.setExp(new Date(Timestamp.from(Instant.ofEpochSecond((Integer) claims.get("exp"))).getTime()));
+
+        return userDetails;
+
     }
 
-    private Claims extractAllClaims(String token, SecretKey key) {
+    public String getHash(String token) {
 
-        Jws<Claims> jwsClaims = Jwts.parser()
-                .verifyWith(key)
-                .build()
-                .parseSignedClaims(token);
+        return this.shredToken(token)[2];
+    }
 
-        return jwsClaims.getPayload();
+    private String[] shredToken(String token) {
+
+        try {
+
+            String[] tokenParts = token.split("\\.");
+
+            if (tokenParts.length != 3) {
+
+                throw new IllegalArgumentException("Invalid JWT token format");
+            }
+
+            return tokenParts;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return new String[0];
     }
 }
+

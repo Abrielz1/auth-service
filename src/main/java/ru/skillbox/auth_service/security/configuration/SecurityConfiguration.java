@@ -14,9 +14,6 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import ru.skillbox.auth_service.security.jwt.JwtAuthenticationEntryPoint;
-import ru.skillbox.auth_service.security.jwt.JwtTokenFilter;
 import ru.skillbox.auth_service.security.service.UserDetailsServiceImpl;
 
 @Configuration
@@ -26,10 +23,6 @@ public class SecurityConfiguration {
 
     private final UserDetailsServiceImpl userDetailsService;
 
-    private final JwtAuthenticationEntryPoint entryPoint;
-
-    private final JwtTokenFilter filter;
-
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
@@ -37,6 +30,7 @@ public class SecurityConfiguration {
 
     @Bean
     public DaoAuthenticationProvider authenticationProvider() {
+
         DaoAuthenticationProvider authenticationProvider = new DaoAuthenticationProvider();
         authenticationProvider.setUserDetailsService(userDetailsService);
         authenticationProvider.setPasswordEncoder(passwordEncoder());
@@ -54,15 +48,13 @@ public class SecurityConfiguration {
     public SecurityFilterChain filterChain(HttpSecurity security) throws Exception {
 
         security.authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/v1/auth/**").permitAll()
-                        .anyRequest().authenticated())
-                .exceptionHandling(configurer -> configurer.authenticationEntryPoint(entryPoint))
+                        .requestMatchers("/api/v1/auth/**").permitAll())
+
                 .csrf(AbstractHttpConfigurer::disable)
                 .httpBasic(Customizer.withDefaults())
                 .sessionManagement(httpSecuritySessionManagementConfigurer -> httpSecuritySessionManagementConfigurer
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .authenticationProvider(authenticationProvider())
-                .addFilterBefore(filter, UsernamePasswordAuthenticationFilter.class);
+                .authenticationProvider(authenticationProvider());
 
         return security.build();
     }

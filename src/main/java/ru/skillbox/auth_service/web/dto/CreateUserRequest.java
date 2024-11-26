@@ -12,8 +12,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
-import ru.skillbox.auth_service.app.entity.model.RoleType;
-import java.util.Set;
 
 @Getter
 @Setter
@@ -24,7 +22,7 @@ import java.util.Set;
 @AllArgsConstructor
 public class CreateUserRequest {
 
-    @NotBlank
+    @NotNull
     private String uuid;
 
     @NotNull
@@ -37,7 +35,7 @@ public class CreateUserRequest {
     @Min(8)
     @Max(32)
     @NotBlank
-    private String password;
+    private String password1;
 
     @Min(8)
     @Max(32)
@@ -59,10 +57,4 @@ public class CreateUserRequest {
 
     @NotBlank
     private String captchaSecret;
-
-    private Boolean blocked;
-
-    private String messagePermission;
-
-    private Set<RoleType> roles;
 }

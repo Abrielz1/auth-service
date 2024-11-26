@@ -2,37 +2,32 @@ package ru.skillbox.auth_service.app.entity;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.redis.core.RedisHash;
 import org.springframework.data.redis.core.index.Indexed;
 
-import java.time.Instant;
-
-@Data
+@Getter
+@Setter
 @Builder
-@RedisHash("refresh_tokens")
+@ToString
+@RedisHash("captcha_image")
+@EqualsAndHashCode
 @NoArgsConstructor
 @AllArgsConstructor
-public class RefreshToken {
+public class Captcha {
 
     @Id
     @Indexed
     private Long id;
 
     @Indexed
-    private Long userId;
-
-    @Indexed
     private String uuid;
 
     @Indexed
-    private String email;
-
-    @Indexed
-    private String token;
-
-    @Indexed
-    private Instant expiryDate;
+    private byte[] image;
 }

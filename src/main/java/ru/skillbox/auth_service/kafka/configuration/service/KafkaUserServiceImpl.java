@@ -7,6 +7,7 @@ import ru.skillbox.auth_service.app.entity.User;
 import ru.skillbox.auth_service.app.entity.model.RoleType;
 import ru.skillbox.auth_service.app.repository.UserRepository;
 import ru.skillbox.auth_service.exception.exceptions.ObjectNotFoundException;
+
 import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
@@ -66,8 +67,12 @@ public class KafkaUserServiceImpl implements KafkaUserService {
             userFromDb.setEmail(userToUpdate.getEmail());
         }
 
-        if (userToUpdate.getPassword() != null) {
-            userFromDb.setPassword(userToUpdate.getPassword());
+        if (userToUpdate.getPassword1() != null) {
+            userFromDb.setPassword1(userToUpdate.getPassword1());
+        }
+
+        if (userToUpdate.getPassword2() != null) {
+            userFromDb.setPassword2(userToUpdate.getPassword2());
         }
 
         if (userToUpdate.getFirstName() != null) {
@@ -135,8 +140,8 @@ public class KafkaUserServiceImpl implements KafkaUserService {
         User userAccountToDisable = this.getUserFomDb(uuid, email).get();
         userAccountToDisable.setBlocked(true);
         this.saveUserToDb(userAccountToDisable);
-
         log.info(("User account with email:" +
                 " %s disabled").formatted(userAccountToDisable.getEmail()));
+
     }
 }

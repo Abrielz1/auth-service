@@ -1,6 +1,7 @@
 package ru.skillbox.auth_service.security.jwt;
 
 import jakarta.servlet.FilterChain;
+import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -13,35 +14,29 @@ import org.springframework.security.web.authentication.WebAuthenticationDetailsS
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
-import ru.skillbox.auth_service.app.repository.RefreshTokenRepository;
 import ru.skillbox.auth_service.security.service.UserDetailsServiceImpl;
-import java.time.Instant;
-import java.util.Date;
+
+import java.io.IOException;
 
 @Slf4j
 @Component
 @RequiredArgsConstructor
 public class JwtTokenFilter extends OncePerRequestFilter  {
-    private final RefreshTokenRepository refreshTokenRepository;
-
-    private final UserDetailsServiceImpl userDetailsService;
 
     private final JwtUtils utils;
+
+    private final UserDetailsServiceImpl userDetailsService;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request,
                                     HttpServletResponse response,
-                                    FilterChain filterChain) {
-
-        try {
+                                    FilterChain filterChain) throws ServletException, IOException {
 
             String jwToken = this.getToken(request);
 
-            refreshTokenRepository.findByToken(jwToken).orElseThrow();
+            if (jwToken != null && utils.validateToken(jwToken)) {
 
-            if (jwToken != null && utils.getExpirationDateFromToken(jwToken).before(Date.from(Instant.now()))) {
-
-                String email = utils.getEmailFromToken(jwToken);
+                String email = utils.getEmail(jwToken);       // достаёт не uuid, а email
                 UserDetails userDetails = userDetailsService.loadUserByUsername(email);
 
 
@@ -55,15 +50,7 @@ public class JwtTokenFilter extends OncePerRequestFilter  {
                 SecurityContextHolder.getContext().setAuthentication(token);
             }
 
-        } catch (Exception e) {
-            log.error("Cannot set user authentication {} ", e.getMessage());
-        }
-
-        try {
             filterChain.doFilter(request, response);
-        } catch (Exception e) {
-            System.out.println("Токен протух кажись " + e.getMessage());
-        }
     }
 
     private String getToken(HttpServletRequest request) {

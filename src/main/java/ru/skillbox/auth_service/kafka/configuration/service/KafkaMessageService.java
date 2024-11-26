@@ -1,8 +1,9 @@
 package ru.skillbox.auth_service.kafka.configuration.service;
 
-import ru.skillbox.auth_service.kafka.dto.KafkaMessageInputDto;
+import ru.skillbox.common.events.CommonEvent;
+import ru.skillbox.common.events.UserEvent;
 
 public interface KafkaMessageService {
 
-   void updateUserEntity(KafkaMessageInputDto message);
+   void updateUserEntity(CommonEvent<UserEvent> message);
 }

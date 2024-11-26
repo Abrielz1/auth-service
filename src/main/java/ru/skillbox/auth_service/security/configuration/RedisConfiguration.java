@@ -9,9 +9,11 @@ import org.springframework.data.redis.connection.jedis.JedisConnectionFactory;
 import org.springframework.data.redis.core.RedisKeyValueAdapter;
 import org.springframework.data.redis.core.convert.KeyspaceConfiguration;
 import org.springframework.data.redis.repository.configuration.EnableRedisRepositories;
+import ru.skillbox.auth_service.app.entity.Captcha;
 import ru.skillbox.auth_service.app.entity.RefreshToken;
+
 import java.time.Duration;
-import java.util.Collections;
+import java.util.List;
 
 @Configuration
 @EnableRedisRepositories(keyspaceConfiguration = RedisConfiguration.RefreshTokenKeyConfiguration.class,
@@ -20,6 +22,9 @@ public class RedisConfiguration {
 
     @Value("${app.jwt.refreshTokenExpiration}")
     private Duration refreshTokenExpiration;
+
+    @Value("${app.jwt.captchaLifeTime}")
+    private Duration captchaExpiration;
 
     @Bean
     public JedisConnectionFactory jedisConnectionFactory(RedisProperties redisProperties) {
@@ -32,15 +37,21 @@ public class RedisConfiguration {
     }
 
     public class RefreshTokenKeyConfiguration extends KeyspaceConfiguration {
+
         private static final String REFRESH_TOKEN_KEYSPACE = "refresh_tokens";
+
+        private static final String CAPTCHA_IMAGE_KEYSPACE = "captcha_image";
 
         @Override
         protected Iterable<KeyspaceSettings> initialConfiguration() {
+
             KeyspaceSettings keyspaceSettings = new KeyspaceSettings(RefreshToken.class, REFRESH_TOKEN_KEYSPACE);
+            KeyspaceSettings captchaImageKeyspaceSettings = new KeyspaceSettings(Captcha.class, CAPTCHA_IMAGE_KEYSPACE);
 
             keyspaceSettings.setTimeToLive(refreshTokenExpiration.getSeconds());
+            captchaImageKeyspaceSettings.setTimeToLive(captchaExpiration.getSeconds());
 
-            return Collections.singleton(keyspaceSettings);
+            return List.of(keyspaceSettings, captchaImageKeyspaceSettings);
         }
     }
 }

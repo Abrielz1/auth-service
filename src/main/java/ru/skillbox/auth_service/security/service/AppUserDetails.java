@@ -5,16 +5,13 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import ru.skillbox.auth_service.app.entity.User;
+
 import java.util.Collection;
 
 @RequiredArgsConstructor
 public class AppUserDetails implements UserDetails {
 
     private final User user;
-
-    public Long getId() {
-        return user.getId();
-    }
 
     public String getEmail() {
         return user.getEmail();
@@ -33,7 +30,7 @@ public class AppUserDetails implements UserDetails {
 
     @Override
     public String getPassword() {
-        return user.getPassword();
+        return user.getPassword1();
     }
 
     @Override

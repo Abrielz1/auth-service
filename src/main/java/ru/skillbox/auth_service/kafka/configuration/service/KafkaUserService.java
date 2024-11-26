@@ -1,6 +1,7 @@
 package ru.skillbox.auth_service.kafka.configuration.service;
 
 import ru.skillbox.auth_service.app.entity.User;
+
 import java.util.Optional;
 
 public interface KafkaUserService {

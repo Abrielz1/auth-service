@@ -1,0 +1,78 @@
+server:
+   port: 8091
+
+eureka:
+  client:
+    registerWithEureka: true
+    serviceUrl:
+        defaultZone: http://79.174.80.223:8761/eureka/
+
+spring:
+  application:
+    name: auth-service
+  data:
+    redis:
+       host: 79.174.80.223
+       port: 6379
+  jpa:
+    hibernate:
+      ddl-auto: none
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+  datasource:
+     url: jdbc:postgresql://79.174.80.223:5432/auth_user_db
+     username: login_for_your_db
+     password: password_for_your_db
+
+  flyway:
+    enabled: true
+    locations: classpath:db/migration
+    baseline-on-migrate: true
+    default-schema: public
+    out-of-order: false
+  kafka:
+    bootstrap-servers: 79.174.80.223:9092
+
+app:
+  jwt:
+    secret: "thisIsAReallyLongAndSecureSecretKey1234567890!"
+    tokenExpiration: 150m
+    refreshTokenExpiration: 600m
+    captchaLifeTime: 60m
+
+  kafka:
+    kafkaMessageTopic0: "user-events"
+    kafkaMessageGroupId0: "user-event-group1"
+    kafkaMessageTopic1: "registration_sending"
+
+EMAIL_USERNAME: test_youre_email@youre_email.ru
+EMAIL_FROM: test_youre_email@youre_email.ru
+EMAIL_PASSWORD: yore_smt_send_password
+EMAIL_HOST: smtp.mail.ru
+Email_PORT: 465
+
+logging:
+  file:
+    name: logfile.log
+  level:
+    org:
+      springframework:
+        orm:
+          jpa:
+            INFO
+          JpaTransactionManager:
+            DEBUG
+        transaction:
+          INFO
+        interceptor:
+          TRACE
+  logback:
+    rolling policy:
+      max-file-size: 5MB
+      max-history: 1
+
+
+
+

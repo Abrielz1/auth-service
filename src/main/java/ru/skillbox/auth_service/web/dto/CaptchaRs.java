@@ -8,16 +8,16 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
-@Getter
 @Setter
+@Getter
 @Builder
 @ToString
 @EqualsAndHashCode
-@NoArgsConstructor
 @AllArgsConstructor
-public class RefreshTokenResponse {
+@NoArgsConstructor
+public class CaptchaRs {
 
-   private String accessToken;
+    private String secret;
 
-   private String refreshToken;
+    private String image;
 }

@@ -1,33 +1,33 @@
 services:
-  redis:
-    image: redis:7.0.12
-    ports:
-      - "6379:6379"
+
   auth-service:
     image: auth-service
     build:
       context: .
     ports:
       - "8091:8091"
+
     environment:
-      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres-container:5432/auth_user_db
-      SPRING_DATASOURCE_USERNAME: network
-      SPRING_DATASOURCE_PASSWORD: dreamteam777*
-      SPRING_KAFKA_BOOTSTRAP_SERVERS: cb359fd6349abd6e-kafka-1:9092  # Подключение к существующему Kafka контейнеру
+      SPRING_REDIS_HOST: my-redis
+      SPRING_REDIS_PORT: 6379
+      PASSWORD: nul
+      TIMEOUT: 2000
+      SPRING_DATASOURCE_URL: jdbc:postgresql://79.174.80.223:5432/auth_user_db
+      SPRING_DATASOURCE_USERNAME: login_for_your_db
+      SPRING_DATASOURCE_PASSWORD: password_for_your_db
+      SPRING_KAFKA_BOOTSTRAP_SERVERS: 79.174.80.223:9092
       SPRING_FLYWAY_ENABLED: "true"
       SPRING_FLYWAY_LOCATIONS: classpath:db/migration
       SPRING_FLYWAY_BASELINE_ON_MIGRATE: "true"
-
     networks:
-      - kafka-docker_default
+      - kafka-docker_kafka-net
       - microservice-network
       - teamcity_default
 
-  networks:
-    kafka-docker_default:
-      external: true
-    microservice-network:
-      external: true
-    teamcity_default:
-      external: true
-
+networks:
+  kafka-docker_kafka-net:
+    external: true
+  microservice-network:
+    external: true
+  teamcity_default:
+    external: true
