@@ -1,4 +1,4 @@
-package ru.skillbox.auth_service.event;
+package ru.skillbox.auth_service.security.configuration.event;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.event.EventListener;

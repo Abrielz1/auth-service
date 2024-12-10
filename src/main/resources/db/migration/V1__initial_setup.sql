@@ -6,8 +6,8 @@ CREATE TABLE IF NOT EXISTS users (
                                      first_name        VARCHAR(320) NOT NULL,
                                      last_name         VARCHAR(320) NOT NULL,
                                      email             VARCHAR(320) NOT NULL UNIQUE,
-                                     password1          VARCHAR(3200) NOT NULL UNIQUE,
-                                     password2         VARCHAR(3200) NOT NULL UNIQUE,
+                                     password1          VARCHAR(3200) NOT NULL,
+                                     password2         VARCHAR(3200) NOT NULL,
                                      message_permission VARCHAR(320)
 );
 

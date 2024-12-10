@@ -14,7 +14,7 @@ import org.springframework.security.web.authentication.WebAuthenticationDetailsS
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
-import ru.skillbox.auth_service.security.service.UserDetailsServiceImpl;
+import ru.skillbox.auth_service.security.service.impl.UserDetailsServiceImpl;
 
 import java.io.IOException;
 
@@ -32,25 +32,23 @@ public class JwtTokenFilter extends OncePerRequestFilter  {
                                     HttpServletResponse response,
                                     FilterChain filterChain) throws ServletException, IOException {
 
-            String jwToken = this.getToken(request);
+        String jwToken = this.getToken(request);
 
-            if (jwToken != null && utils.validateToken(jwToken)) {
+        if (jwToken != null && utils.validateToken(jwToken)) {
+            String email = utils.getEmail(jwToken);
+            UserDetails userDetails = userDetailsService.loadUserByUsername(email);
 
-                String email = utils.getEmail(jwToken);       // достаёт не uuid, а email
-                UserDetails userDetails = userDetailsService.loadUserByUsername(email);
+            UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(
+                    userDetails,
+                    null,
+                    userDetails.getAuthorities()
+            );
 
+            token.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+            SecurityContextHolder.getContext().setAuthentication(token);
+        }
 
-                UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(
-                        userDetails,
-                        null,
-                        userDetails.getAuthorities()
-                );
-
-                token.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-                SecurityContextHolder.getContext().setAuthentication(token);
-            }
-
-            filterChain.doFilter(request, response);
+        filterChain.doFilter(request, response);
     }
 
     private String getToken(HttpServletRequest request) {

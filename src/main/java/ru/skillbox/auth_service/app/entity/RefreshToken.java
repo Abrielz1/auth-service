@@ -17,22 +17,40 @@ import java.time.Instant;
 @AllArgsConstructor
 public class RefreshToken {
 
+    /**
+     * id рефреш токена
+     */
     @Id
     @Indexed
     private Long id;
 
+    /**
+     * id пользователя
+     */
     @Indexed
     private Long userId;
 
+    /**
+     * uuid пользователя
+     */
     @Indexed
     private String uuid;
 
+    /**
+     * электронная пользователя
+     */
     @Indexed
     private String email;
 
+    /**
+     * рефреш токен
+     */
     @Indexed
     private String token;
 
+    /**
+     * время жизни токен
+     */
     @Indexed
     private Instant expiryDate;
 }

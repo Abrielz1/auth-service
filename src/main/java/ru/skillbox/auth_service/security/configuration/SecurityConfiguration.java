@@ -14,7 +14,7 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
-import ru.skillbox.auth_service.security.service.UserDetailsServiceImpl;
+import ru.skillbox.auth_service.security.service.impl.UserDetailsServiceImpl;
 
 @Configuration
 @EnableMethodSecurity
@@ -48,7 +48,8 @@ public class SecurityConfiguration {
     public SecurityFilterChain filterChain(HttpSecurity security) throws Exception {
 
         security.authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/v1/auth/**").permitAll())
+                        .requestMatchers("/api/v1/auth/**").permitAll()
+                        .requestMatchers("/swagger-ui/", "/v3/api-docs/").permitAll())
 
                 .csrf(AbstractHttpConfigurer::disable)
                 .httpBasic(Customizer.withDefaults())

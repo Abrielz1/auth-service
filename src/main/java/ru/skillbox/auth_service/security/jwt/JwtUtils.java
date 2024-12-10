@@ -84,15 +84,15 @@ public class JwtUtils {
 
             return true;
         } catch (SignatureException e) {
-            log.error("Signature is Invalid: {}", e.getMessage());
+            log.error("%nSignature is Invalid: {}", e.getMessage());
         } catch (MalformedJwtException e) {
-            log.error("Token is Invalid: {}", e.getMessage());
+            log.error("%nToken is Invalid: {}", e.getMessage());
         } catch (ExpiredJwtException e) {
-            log.error("Token is Expired: {}", e.getMessage());
+            log.error("%nToken is Expired: {}", e.getMessage());
         } catch (UnsupportedJwtException e) {
-            log.error("Token is Unsupported: {}", e.getMessage());
+            log.error("%nToken is Unsupported: {}", e.getMessage());
         } catch (IllegalArgumentException e) {
-            log.error("Claims string is Empty: {}", e.getMessage());
+            log.error("%nClaims string is Empty: {}", e.getMessage());
         }
 
         return false;
@@ -109,9 +109,9 @@ public class JwtUtils {
 
             claims = objectMapper.readValue(payload, Map.class);
         } catch (JsonProcessingException e) {
-            log.info("Via Security Service getUserFromToken get null or empty or malformed token: %s !".formatted(token));
+            log.info("%nVia Security Service getUserFromToken get null or empty or malformed token: %s !".formatted(token));
             e.printStackTrace();
-            throw new BadRequestException("No payload in token or token may be empty or null!");
+            throw new BadRequestException("%nNo payload in token or token may be empty or null!");
         }
 
         userDetails.setEmail(claims.get(EMAIL).toString());
@@ -121,7 +121,6 @@ public class JwtUtils {
         userDetails.setExp(new Date(Timestamp.from(Instant.ofEpochSecond((Integer) claims.get("exp"))).getTime()));
 
         return userDetails;
-
     }
 
     public String getHash(String token) {
@@ -137,7 +136,7 @@ public class JwtUtils {
 
             if (tokenParts.length != 3) {
 
-                throw new IllegalArgumentException("Invalid JWT token format");
+                throw new IllegalArgumentException("%nInvalid JWT token format");
             }
 
             return tokenParts;

@@ -1,7 +1,7 @@
-package ru.skillbox.auth_service.web.dto;
+package ru.skillbox.auth_service.web.dto.request;
 
-import jakarta.validation.constraints.Max;
-import jakarta.validation.constraints.Min;
+import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -18,10 +18,10 @@ import lombok.ToString;
 @EqualsAndHashCode
 @NoArgsConstructor
 @AllArgsConstructor
-public class NewPasswordDto {
+public class PasswordRecoveryRequest {
 
-    @Min(8)
-    @Max(32)
+    @Schema(description = "Email user/Почта юзера")
+    @Email
     @NotBlank
-    private String password;
+    private String email;
 }

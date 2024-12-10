@@ -21,13 +21,22 @@ import org.springframework.data.redis.core.index.Indexed;
 @AllArgsConstructor
 public class Captcha {
 
+    /**
+     * id капчи
+     */
     @Id
     @Indexed
     private Long id;
 
+    /**
+     * uuid капчи
+     */
     @Indexed
     private String uuid;
 
+    /**
+     * байт массив с картинкой капчи
+     */
     @Indexed
     private byte[] image;
 }

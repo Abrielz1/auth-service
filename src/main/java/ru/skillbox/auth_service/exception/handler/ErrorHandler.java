@@ -40,10 +40,10 @@ public class ErrorHandler {
     }
 
     @ExceptionHandler
-    @ResponseStatus(HttpStatus.GONE)
+    @ResponseStatus(HttpStatus.UNAUTHORIZED)
     public ErrorResponse handlerAlreadyExistsHandler(final AlreadyExistsException exception) {
 
-        log.warn("410 {}", exception.getMessage(), exception);
+        log.warn("401 {}", exception.getMessage(), exception);
         return new ErrorResponse("User already exists! "
                 + exception.getMessage(), exception.getMessage());
     }

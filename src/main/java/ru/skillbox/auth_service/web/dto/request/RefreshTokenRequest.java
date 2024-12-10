@@ -1,7 +1,6 @@
-package ru.skillbox.auth_service.web.dto;
+package ru.skillbox.auth_service.web.dto.request;
 
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotBlank;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
@@ -17,9 +16,8 @@ import lombok.ToString;
 @EqualsAndHashCode
 @NoArgsConstructor
 @AllArgsConstructor
-public class PasswordRecoveryDto {
+public class RefreshTokenRequest {
 
-    @Email
-    @NotBlank
-    private String email;
+    @Schema(description = "Token/Токен")
+    private String refreshToken;
 }

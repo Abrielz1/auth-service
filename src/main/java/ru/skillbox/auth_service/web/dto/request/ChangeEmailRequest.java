@@ -1,5 +1,7 @@
-package ru.skillbox.auth_service.web.dto;
+package ru.skillbox.auth_service.web.dto.request;
 
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
@@ -15,7 +17,9 @@ import lombok.ToString;
 @EqualsAndHashCode
 @NoArgsConstructor
 @AllArgsConstructor
-public class RefreshTokenRequest {
+public class ChangeEmailRequest {
 
-    private String refreshToken;
+    @Email
+    @NotBlank
+    private String email;
 }

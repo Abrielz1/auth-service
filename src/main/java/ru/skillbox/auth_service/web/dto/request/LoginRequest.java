@@ -1,10 +1,10 @@
-package ru.skillbox.auth_service.web.dto;
+package ru.skillbox.auth_service.web.dto.request;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
@@ -13,6 +13,10 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
+/**
+ * DTO аутентификации
+ */
+
 @Getter
 @Setter
 @Builder
@@ -20,41 +24,17 @@ import lombok.ToString;
 @EqualsAndHashCode
 @NoArgsConstructor
 @AllArgsConstructor
-public class CreateUserRequest {
+public class
+LoginRequest {
 
-    @NotNull
-    private String uuid;
-
-    @NotNull
-    private Boolean deleted;
-
+    @Schema(description = "Email user/Почта юзера")
     @Email
     @NotBlank
     private String email;
 
+    @Schema(description = "Password user/Пароль юзера")
     @Min(8)
     @Max(32)
     @NotBlank
-    private String password1;
-
-    @Min(8)
-    @Max(32)
-    @NotBlank
-    private String password2;
-
-    @Min(1)
-    @Max(32)
-    @NotBlank
-    private String firstName;
-
-    @Min(1)
-    @Max(32)
-    @NotBlank
-    private String lastName;
-
-    @NotBlank
-    private String captchaCode;
-
-    @NotBlank
-    private String captchaSecret;
+    private String password;
 }

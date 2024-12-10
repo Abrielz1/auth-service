@@ -1,7 +1,5 @@
-package ru.skillbox.auth_service.web.dto;
+package ru.skillbox.auth_service.web.dto.request;
 
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
@@ -12,10 +10,6 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
-/**
- * DTO аутентификации
- */
-
 @Getter
 @Setter
 @Builder
@@ -23,15 +17,14 @@ import lombok.ToString;
 @EqualsAndHashCode
 @NoArgsConstructor
 @AllArgsConstructor
-public class
-LoginRequest {
-
-    @Email
-    @NotBlank
-    private String email;
+public class ChangePasswordRequest {
 
     @Min(8)
-    @Max(32)
+    private String newPassword1;
+
+    @Min(8)
+    private String newPassword2;
+
     @NotBlank
-    private String password;
+    private String oldPassword;
 }

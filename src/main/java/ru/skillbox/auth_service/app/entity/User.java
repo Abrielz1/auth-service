@@ -11,6 +11,8 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;
+import jakarta.persistence.NamedAttributeNode;
+import jakarta.persistence.NamedEntityGraph;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -32,39 +34,70 @@ import java.util.Set;
 @Setter
 @Builder
 @ToString
+@NamedEntityGraph(name = "users_entity-graph", attributeNodes = @NamedAttributeNode("roles"))
 @NoArgsConstructor
 @AllArgsConstructor
 public class User implements Serializable {
 
+    /**
+     * id пользователя
+     */
     @Id
     @Column(name = "id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    /**
+     * uuid пользователя
+     */
     @Column(nullable = false, name = "uuid", unique = true)
     private String uuid;
 
+    /**
+     * флаг удалён/deleted ли пользователь
+     */
     @Column(nullable = false, name = "deleted")
     private Boolean deleted;
 
+    /**
+     * флаг забанен/заблокирован ли пользователь
+     */
     @Column(name = "blocked")
     private Boolean blocked;
 
+    /**
+     * Имя пользователя
+     */
     @Column(nullable = false, name = "first_name")
     private String firstName;
 
+    /**
+     * Фамилия пользователя
+     */
     @Column(nullable = false, name = "last_name")
     private String lastName;
 
-    @Column(nullable = false, name = "password1", unique = true)
+    /**
+     * пароль 1
+     */
+    @Column(nullable = false, name = "password1")
     private String password1;
 
-    @Column(nullable = false, name = "password2", unique = true)
+    /**
+     * пароль 2
+     */
+    @Column(nullable = false, name = "password2")
     private String password2;
 
+    /**
+     * электронная пользователя
+     */
     @Column(nullable = false, name = "email", unique = true)
     private String email;
 
+    /**
+     * кому может писать пользователь
+     */
     @Column(name = "message_permission")
     private String messagePermission;
 

@@ -17,7 +17,7 @@ import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.kafka.core.ProducerFactory;
 import org.springframework.kafka.support.serializer.JsonDeserializer;
 import org.springframework.kafka.support.serializer.JsonSerializer;
-import ru.skillbox.auth_service.kafka.configuration.config.util.CommonEventDeserializer;
+import ru.skillbox.auth_service.kafka.configuration.util.CommonEventDeserializer;
 import ru.skillbox.common.events.CommonEvent;
 import ru.skillbox.common.events.RegUserEvent;
 import ru.skillbox.common.events.UserEvent;
@@ -36,17 +36,15 @@ public class KafkaConfig {
     private String kafkaMessageGroupId1;
 
     @Bean
-    public ConsumerFactory<String, CommonEvent<UserEvent>> kafkaMessageConsumerFactory(ObjectMapper objectMapper) {
-
-        Map<String, Object> config = new HashMap<>();
-
-        config.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
-        config.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringSerializer.class);
-        config.put(ConsumerConfig.GROUP_ID_CONFIG, kafkaMessageGroupId1);
-        config.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, CommonEventDeserializer.class);
-        config.put(JsonDeserializer.TRUSTED_PACKAGES, "*");
-
-        return new DefaultKafkaConsumerFactory<>(config, new StringDeserializer(), new JsonDeserializer<>(objectMapper));
+    public ConsumerFactory<String, CommonEvent<UserEvent>> kafkaMessageConsumerFactory() {
+        log.info("Initializing ConsumerFactory for RegUserEvent with bootstrap servers: {}", bootstrapServers);
+        Map<String, Object> props = new HashMap<>();
+        props.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
+        props.put(ConsumerConfig.GROUP_ID_CONFIG, kafkaMessageGroupId1);
+        props.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
+        props.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, CommonEventDeserializer.class);
+        props.put(JsonDeserializer.TRUSTED_PACKAGES, "*");
+        return new DefaultKafkaConsumerFactory<>(props);
     }
 
     @Bean

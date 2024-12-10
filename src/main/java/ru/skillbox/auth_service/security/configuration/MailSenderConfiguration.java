@@ -11,7 +11,7 @@ import java.util.Properties;
 @Configuration
 public class MailSenderConfiguration {
 
-    @Value("${Email_PORT}")
+    @Value("${EMAIL_PORT}")
     private String port;
 
     @Value("${EMAIL_USERNAME}")

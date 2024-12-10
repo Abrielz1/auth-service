@@ -1,4 +1,4 @@
-package ru.skillbox.auth_service.kafka.configuration.service;
+package ru.skillbox.auth_service.kafka.service;
 
 import ru.skillbox.auth_service.app.entity.User;
 
@@ -10,9 +10,7 @@ public interface KafkaUserService {
 
     Optional<User> getUserFomDb(String uuid, String email);
 
-    User updateUser(User user);
-
-    void saveUserToDb(User user);
+    void updateUser(User user);
 
     void disableUserAccount(String uuid, String email);
 

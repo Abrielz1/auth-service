@@ -23,8 +23,8 @@ spring:
         format_sql: true
   datasource:
      url: jdbc:postgresql://79.174.80.223:5432/auth_user_db
-     username: login_for_your_db
-     password: password_for_your_db
+     username: network
+     password: dreamteam777*
 
   flyway:
     enabled: true
@@ -46,12 +46,13 @@ app:
     kafkaMessageTopic0: "user-events"
     kafkaMessageGroupId0: "user-event-group1"
     kafkaMessageTopic1: "registration_sending"
+    DEFAULT_PASSWORD: 1234567890
 
-EMAIL_USERNAME: test_youre_email@youre_email.ru
-EMAIL_FROM: test_youre_email@youre_email.ru
-EMAIL_PASSWORD: yore_smt_send_password
+EMAIL_USERNAME: test_mail_test45@mail.ru
+EMAIL_FROM: test_mail_test45@mail.ru
+EMAIL_PASSWORD: k4hF9KCsqPSZyE5ZUHEd
 EMAIL_HOST: smtp.mail.ru
-Email_PORT: 465
+EMAIL_PORT: 465
 
 logging:
   file:
