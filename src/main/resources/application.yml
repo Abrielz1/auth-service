@@ -48,9 +48,9 @@ app:
     kafkaMessageTopic1: "registration_sending"
     DEFAULT_PASSWORD: 1234567890
 
-EMAIL_USERNAME: test_mail_test45@mail.ru
-EMAIL_FROM: test_mail_test45@mail.ru
-EMAIL_PASSWORD: k4hF9KCsqPSZyE5ZUHEd
+EMAIL_USERNAME: test@mail.ru
+EMAIL_FROM: test@mail.ru
+EMAIL_PASSWORD: 11111111111111
 EMAIL_HOST: smtp.mail.ru
 EMAIL_PORT: 465
 
